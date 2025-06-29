@@ -20,6 +20,21 @@ public class PieceCalc {
             BishopCalc bishopCalcMoves = new BishopCalc(board, position);
             return bishopCalcMoves.calcBisMoves();
         }
+        if (type == ChessPiece.PieceType.ROOK) {
+            RookCalc rookCalcMoves = new RookCalc(board, position);
+            return rookCalcMoves.calcRookMoves();
+        }
+        if (type == ChessPiece.PieceType.QUEEN) {
+            QueenCalc queenCalcMoves = new QueenCalc(board, position);
+            return queenCalcMoves.calcQueenMoves();
+        }
+        if (type == ChessPiece.PieceType.KING) {
+            KingCalc kingCalcMoves = new KingCalc(board, position);
+            return kingCalcMoves.calcKingMoves();
+        }
+
+
+
     return null;
     }
 

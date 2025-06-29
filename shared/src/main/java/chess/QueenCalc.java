@@ -46,6 +46,7 @@ public class QueenCalc {
                 }
                 if (occupant.getTeamColor() != startPiece.getTeamColor()) {
                     QueenMoves.add(new ChessMove(position, newPosition, null));
+                    System.out.println("Queen can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                     break; // We can't go any further
                 } else {
                     break;
