@@ -52,6 +52,12 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new ArrayList<>();
+        // call piece calc which then figures out which piece calculates moves and should then return all possible moves to here
+        PieceCalc moves = new PieceCalc(board,myPosition);
+        Collection<ChessMove> Pmoves = moves.calculateMoves(board);
+        for (ChessMove move : Pmoves) {
+            System.out.println(move);
+        }
+        return Pmoves;
     }
 }
