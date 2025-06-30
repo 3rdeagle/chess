@@ -32,6 +32,13 @@ public class PieceCalc {
             KingCalc kingCalcMoves = new KingCalc(board, position);
             return kingCalcMoves.calcKingMoves();
         }
+        if (type == ChessPiece.PieceType.KNIGHT) {
+            KnightCalc knightCalcMoves = new KnightCalc(board, position);
+            return knightCalcMoves.calcKnightMoves();
+        }
+//        if (type == ChessPiece.PieceType.PAWN) {
+//            PawnCalc
+//        }
 
 
 
