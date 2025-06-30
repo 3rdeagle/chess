@@ -47,7 +47,7 @@ public class RookCalc {
                 else if (occupant.getTeamColor() != startPiece.getTeamColor()) {
                     RookMoves.add(new ChessMove(position, newPosition, null));
                     System.out.println("Rook can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
-                    continue; // We can't go any further
+                    break; // We can't go any further
                 } else {
                     break;
                 }
