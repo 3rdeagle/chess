@@ -21,6 +21,21 @@ public class PawnCalc {
         }
     }
 
+    public void newMove(int row, ChessPosition newPosition, int promoRow, ArrayList<ChessMove> PawnMoves) {
+        ChessPiece.PieceType[] promotions = new ChessPiece.PieceType[]{ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.ROOK};
+
+        if (row == promoRow){
+            for (var promo : promotions) {
+                PawnMoves.add(new ChessMove(position, newPosition, promo));
+                System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn() + " and be promoted");
+            }
+        } else {
+            PawnMoves.add(new ChessMove(position, newPosition, null));
+            System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+
+        }
+    }
+
     public Collection<ChessMove> calcPawnMoves() {
         ArrayList<ChessMove> PawnMoves = new ArrayList<>();
         int startCol = position.getColumn(); // starting column
@@ -33,6 +48,8 @@ public class PawnCalc {
         int[] twoForward;
         int startSetup;
         int[][] captures;
+        int promoRow;
+
 
         // Check the color and initiate potential directions
         if (startPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
@@ -40,11 +57,13 @@ public class PawnCalc {
             twoForward = new int[] {2, 0};
             startSetup = 2;
             captures = new int[][] {{1, 1}, {1, -1}};
+            promoRow = 8;
         } else {
             forward = new int[] {-1, 0};
             twoForward = new int[] {-2, 0};
             startSetup = 7;
             captures = new int[][] {{-1, 1}, {-1, -1}};
+            promoRow = 1;
         }
 
         //Check 1 step forward
@@ -57,8 +76,9 @@ public class PawnCalc {
         ChessPosition newPosition = new ChessPosition(newRow, newCol);
         var occupant = board.getPiece(newPosition);              // See what piece is on the new potential spot
         if (inbounds(newRow, newCol) && (occupant == null)) {
-            PawnMoves.add(new ChessMove(position, newPosition, null));  // add the one step to it
-            System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+            newMove(newRow, newPosition, promoRow, PawnMoves);
+//            PawnMoves.add(new ChessMove(position, newPosition, null));  // add the one step to it
+//            System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
             // Check for 2nd step if at setup position
             if (startRow == startSetup) {
                 int twoRow = startRow + dr2;
@@ -66,7 +86,7 @@ public class PawnCalc {
                 ChessPosition newPositionTwo = new ChessPosition(twoRow, twoCol);
                 var occupantTwo = board.getPiece(newPositionTwo);              // See what piece is on the new potential spot
                 if (occupantTwo == null) { // shouldn't need to check inbounds as we can only do a 2 move from our initial setup position
-                    PawnMoves.add(new ChessMove(position, newPositionTwo, null));
+                    PawnMoves.add(new ChessMove(position, newPositionTwo, null)); // never need to check for promotion only happens at start
                     System.out.println("Pawn can move to row:" + newPositionTwo.getRow() + ", col:" + newPositionTwo.getColumn());
                 }
             }
@@ -81,8 +101,10 @@ public class PawnCalc {
                 var occupantTwo = board.getPiece(newPositionCapture);              // See what piece is on the new potential spot
 
                 if (occupantTwo != null && (occupantTwo.getTeamColor() != startPiece.getTeamColor())){
-                    PawnMoves.add(new ChessMove(position, newPositionCapture, null));
-                    System.out.println("Pawn can capture to row:" + newPositionCapture.getRow() + ", col:" + newPositionCapture.getColumn());
+//                    PawnMoves.add(new ChessMove(position, newPositionCapture, null));
+//                    System.out.println("Pawn can capture to row:" + newPositionCapture.getRow() + ", col:" + newPositionCapture.getColumn());
+                    System.out.println("Pawn can capture");
+                    newMove(captureRow, newPositionCapture, promoRow, PawnMoves);
                 }
             }
         }
