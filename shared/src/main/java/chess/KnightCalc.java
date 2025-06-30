@@ -12,7 +12,7 @@ public class KnightCalc {
         this.position = position;
     }
     public Collection<ChessMove> calcKnightMoves(){
-        ArrayList<ChessMove> KnightMoves = new java.util.ArrayList<>();
+        ArrayList<ChessMove> KnightMoves = new ArrayList<>(); // make an array using ArrayList so it can dynamically change
         int startCol = position.getColumn(); // starting column
         int startRow = position.getRow(); // starting row
         var startPiece = board.getPiece(new ChessPosition(startRow, startCol)); // Getting the Piece that is stored on the board
@@ -25,7 +25,7 @@ public class KnightCalc {
             int col = startCol;
 
             row += dr; // change the row
-            col += dc; // change the column have to change both for a King
+            col += dc; // change the column have to change both for a Knight
 
             if (col < 1 || col > 8 || row < 1 || row > 8) { // if it is outside of the boundaries break
                 continue;
