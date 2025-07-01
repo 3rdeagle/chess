@@ -22,7 +22,7 @@ public class PawnCalc {
     }
 
     public void newMove(int row, ChessPosition newPosition, int promoRow, ArrayList<ChessMove> PawnMoves) {
-        ChessPiece.PieceType[] promotions = new ChessPiece.PieceType[]{ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.ROOK};
+        ChessPiece.PieceType[] promotions = new ChessPiece.PieceType[]{ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
 
         if (row == promoRow){
             for (var promo : promotions) {
