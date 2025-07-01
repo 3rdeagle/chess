@@ -108,5 +108,10 @@ public class ChessGame {
         throw new RuntimeException("Not implemented");
     }
 
+    @Override
+    public String toString() {
+        return "ChessGame{}";
+    }
+
 
 }
