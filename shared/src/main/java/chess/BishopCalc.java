@@ -25,6 +25,7 @@ public class BishopCalc {
            int dc = dir[1]; // delta column
            int row = startRow;
            int col = startCol;
+
             while (true) { // if no piece in the way or not off the board then its a legal move
 
                 row += dr; // change the row
@@ -36,6 +37,7 @@ public class BishopCalc {
 
                 ChessPosition newPosition = new ChessPosition(row, col);
                 var occupant = board.getPiece(newPosition);
+
                 if (occupant == null) {
                     BisMoves.add(new ChessMove(position, newPosition, null ));
                     System.out.println("Bishop can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());

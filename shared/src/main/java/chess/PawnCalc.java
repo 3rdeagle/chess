@@ -73,8 +73,10 @@ public class PawnCalc {
         int dc2 = twoForward[1];
         int newRow = startRow + dr;
         int newCol = startCol + dc;
+
         ChessPosition newPosition = new ChessPosition(newRow, newCol);
         var occupant = board.getPiece(newPosition);              // See what piece is on the new potential spot
+
         if (inbounds(newRow, newCol) && (occupant == null)) {
             newMove(newRow, newPosition, promoRow, PawnMoves);
 //            PawnMoves.add(new ChessMove(position, newPosition, null));  // add the one step to it
@@ -83,24 +85,28 @@ public class PawnCalc {
             if (startRow == startSetup) {
                 int twoRow = startRow + dr2;
                 int twoCol = startCol + dc2;
+
                 ChessPosition newPositionTwo = new ChessPosition(twoRow, twoCol);
                 var occupantTwo = board.getPiece(newPositionTwo);              // See what piece is on the new potential spot
+
                 if (occupantTwo == null) { // shouldn't need to check inbounds as we can only do a 2 move from our initial setup position
                     PawnMoves.add(new ChessMove(position, newPositionTwo, null)); // never need to check for promotion only happens at start
                     System.out.println("Pawn can move to row:" + newPositionTwo.getRow() + ", col:" + newPositionTwo.getColumn());
                 }
             }
         }
+
         for (int[] capture : captures) { // can only capture in the two direct diagonals so we just check both
             int drCapture = capture[0];
             int dcCapture = capture[1];
             int captureRow = startRow + drCapture;
             int captureCol = startCol + dcCapture;
             if (inbounds(captureRow, captureCol)) {
-                ChessPosition newPositionCapture = new ChessPosition(captureRow, captureCol);
-                var occupantTwo = board.getPiece(newPositionCapture);              // See what piece is on the new potential spot
 
-                if (occupantTwo != null && (occupantTwo.getTeamColor() != startPiece.getTeamColor())){
+                ChessPosition newPositionCapture = new ChessPosition(captureRow, captureCol);
+                var occupantCapture = board.getPiece(newPositionCapture);              // See what piece is on the new potential spot
+
+                if (occupantCapture != null && (occupantCapture.getTeamColor() != startPiece.getTeamColor())){
 //                    PawnMoves.add(new ChessMove(position, newPositionCapture, null));
 //                    System.out.println("Pawn can capture to row:" + newPositionCapture.getRow() + ", col:" + newPositionCapture.getColumn());
                     System.out.println("Pawn can capture");

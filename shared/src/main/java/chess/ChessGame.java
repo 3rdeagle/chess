@@ -10,15 +10,16 @@ import java.util.Collection;
  */
 public class ChessGame {
 
+    private TeamColor currentTurn;
     public ChessGame() {
-
+        this.currentTurn = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return currentTurn;
     }
 
     /**
@@ -27,8 +28,8 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
-    }
+            this.currentTurn = team;
+        }
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -56,6 +57,14 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+
+        // figure out which team goes
+        // sees the valid moves
+        // Make the move happen how you might ask. Great question
+        // we remove the piece from its current spot
+        // we see if theres a piece in the way to capure, if so remove it
+        // we then place the piece at the endposition where it was moving to
+        
         throw new RuntimeException("Not implemented");
     }
 
