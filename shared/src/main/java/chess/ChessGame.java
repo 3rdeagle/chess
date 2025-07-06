@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -9,10 +11,11 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-
+    private ChessBoard board;
     private TeamColor currentTurn;
     public ChessGame() {
         this.currentTurn = TeamColor.WHITE;
+        this.board  = new ChessBoard();
     }
 
     /**
@@ -53,10 +56,17 @@ public class ChessGame {
         }
         // get all of the potential moves from pieceMoves calculator
         Collection<ChessMove> potentialMoves = piece.pieceMoves(board, startPosition);
-
+        List<ChessMove> allowedMoves = new ArrayList<>();
         for (ChessMove move : potentialMoves) {
+            ChessBoard copy = getBoard().clone(); // create the copy
+            copy.makeMove(move); // make a move in the copy for each potential move we have
 
+            if (!copy.isInCheck(currentTurn)) { // if the copy isn't in check from that move then add it
+                allowedMoves.add(move);
+            }
         }
+
+        return allowedMoves;
         // We then say look is the move gonna put us in check, so somehow do a copy of the board and check all possilb emoves
         // the moves that do put us in check throw them out, and the ones that don't, keep.
     }
@@ -85,8 +95,50 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+    public boolean isInCheck(TeamColor teamColor) { // so how do we know if we are in check???
+        /* We need to know what the kings position is
+        then if we know where the opponent team pieces are,
+        we could check all of their potential moves,
+
+        if any of those moves attack the king then we are in check, if not we free to run
+         */
+
+        ChessBoard board = getBoard(); // get the board
+        ChessPosition kingPosition = null; // set a position we can fill once we find our teams king
+
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col ++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+                if (piece.getPieceType() == ChessPiece.PieceType.KING  &&  piece.getTeamColor() == teamColor) {
+                    kingPosition = position;
+                    break;
+                }
+            }
+        }
+
+        TeamColor enemyColor;
+        if (teamColor == TeamColor.WHITE) { // if our color is White the the enemy color is black or vice versa
+            enemyColor = TeamColor.BLACK;
+        } else {
+            enemyColor = TeamColor.WHITE;
+        }
+
+        // Check for all the enemy pieces and see what possible moves they got
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                ChessPosition enemyPosition = new ChessPosition(row, col);
+                ChessPiece enemyPiece = board.getPiece(enemyPosition);
+                if (enemyPiece.getTeamColor() == enemyColor) { //Problems with null potentially??
+                    Collection<ChessMove> moves = enemyPiece.pieceMoves(board, enemyPosition);
+                    for (ChessMove move : moves) {
+                        return move.getEndPosition() == kingPosition;
+                    }
+                }
+            }
+        }
+
+
     }
 
     /**
@@ -116,7 +168,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -125,7 +177,7 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return board;
     }
 
     @Override
