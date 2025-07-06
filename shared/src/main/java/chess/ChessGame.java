@@ -47,7 +47,18 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = getBoard().getPiece(startPosition);
+        if (piece == null) {
+            return null;
+        }
+        // get all of the potential moves from pieceMoves calculator
+        Collection<ChessMove> potentialMoves = piece.pieceMoves(board, startPosition);
+
+        for (ChessMove move : potentialMoves) {
+
+        }
+        // We then say look is the move gonna put us in check, so somehow do a copy of the board and check all possilb emoves
+        // the moves that do put us in check throw them out, and the ones that don't, keep.
     }
 
     /**
@@ -64,7 +75,7 @@ public class ChessGame {
         // we remove the piece from its current spot
         // we see if theres a piece in the way to capure, if so remove it
         // we then place the piece at the endposition where it was moving to
-        
+
         throw new RuntimeException("Not implemented");
     }
 
