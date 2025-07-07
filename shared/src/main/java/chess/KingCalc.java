@@ -30,7 +30,7 @@ public class KingCalc {
             col += dc; // change the column have to change both for a King
 
             if (col < 1 || col > 8 || row < 1 || row > 8) { // if it is outside of the boundaries break
-                break;
+                continue; // continues on to the next direction
             }
 
             ChessPosition newPosition = new ChessPosition(row, col);

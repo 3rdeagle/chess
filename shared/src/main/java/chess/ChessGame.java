@@ -10,7 +10,7 @@ import java.util.List;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessGame {
+public class ChessGame implements Cloneable{
     private ChessBoard board;
     private TeamColor currentTurn;
     public ChessGame() {
@@ -58,13 +58,17 @@ public class ChessGame {
         Collection<ChessMove> potentialMoves = piece.pieceMoves(board, startPosition);
         List<ChessMove> allowedMoves = new ArrayList<>();
         for (ChessMove move : potentialMoves) {
-            ChessBoard copy = getBoard().clone(); // create the copy
-            copy.makeMove(move); // make a move in the copy for each potential move we have
-
-            if (!copy.isInCheck(currentTurn)) { // if the copy isn't in check from that move then add it
-                allowedMoves.add(move);
+            ChessGame copy = this.clone(); // create the deep copy of the game
+            try {
+                copy.makeMove(move);
+            } catch (InvalidMoveException e) {
+                continue;
             }
-        }
+
+            if (!copy.isInCheck(copy.currentTurn)) { // if the copy isn't in check from that move then add it
+              allowedMoves.add(move);
+            }
+       }
 
         return allowedMoves;
         // We then say look is the move gonna put us in check, so somehow do a copy of the board and check all possilb emoves
@@ -79,14 +83,29 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+        ChessPiece piece = board.getPiece(start);
+
+
+        board.addPiece(start, null); // We essentially pick it up and remove it from the board
+        board.addPiece(end, piece); // We then move the piece to the new spot
+
+
+        if (currentTurn == TeamColor.WHITE) { // if white make it black or vice versa
+            currentTurn = TeamColor.BLACK;
+        } else {
+            currentTurn = TeamColor.WHITE;
+        }
+
+
+
         // figure out which team goes
         // sees the valid moves
         // Make the move happen how you might ask. Great question
         // we remove the piece from its current spot
         // we see if theres a piece in the way to capure, if so remove it
         // we then place the piece at the endposition where it was moving to
-
-        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -137,8 +156,7 @@ public class ChessGame {
                 }
             }
         }
-
-
+        return false;
     }
 
     /**
@@ -181,9 +199,18 @@ public class ChessGame {
     }
 
     @Override
-    public String toString() {
-        return "ChessGame{}";
+    public ChessGame clone() { // copying the board to a deep clone,
+        try {
+            ChessGame cloneGame = (ChessGame) super.clone();
+
+            cloneGame.board = this.board.clone();
+            cloneGame.currentTurn = this.currentTurn;
+            return cloneGame;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
 
 }

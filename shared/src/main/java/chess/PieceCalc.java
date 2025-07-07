@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PieceCalc {
 
@@ -46,4 +47,24 @@ public class PieceCalc {
     return null;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PieceCalc pieceCalc = (PieceCalc) o;
+        return Objects.equals(position, pieceCalc.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(position);
+    }
+
+    @Override
+    public String toString() {
+        return "PieceCalc{" +
+                "position=" + position +
+                '}';
+    }
 }
