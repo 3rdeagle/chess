@@ -27,11 +27,11 @@ public class PawnCalc {
         if (row == promoRow){
             for (var promo : promotions) {
                 PawnMoves.add(new ChessMove(position, newPosition, promo));
-                System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn() + " and be promoted");
+//                System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn() + " and be promoted");
             }
         } else {
             PawnMoves.add(new ChessMove(position, newPosition, null));
-            System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//            System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
 
         }
     }
@@ -91,7 +91,7 @@ public class PawnCalc {
 
                 if (occupantTwo == null) { // shouldn't need to check inbounds as we can only do a 2 move from our initial setup position
                     PawnMoves.add(new ChessMove(position, newPositionTwo, null)); // never need to check for promotion only happens at start
-                    System.out.println("Pawn can move to row:" + newPositionTwo.getRow() + ", col:" + newPositionTwo.getColumn());
+//                    System.out.println("Pawn can move to row:" + newPositionTwo.getRow() + ", col:" + newPositionTwo.getColumn());
                 }
             }
         }
@@ -109,7 +109,7 @@ public class PawnCalc {
                 if (occupantCapture != null && (occupantCapture.getTeamColor() != startPiece.getTeamColor())){
 //                    PawnMoves.add(new ChessMove(position, newPositionCapture, null));
 //                    System.out.println("Pawn can capture to row:" + newPositionCapture.getRow() + ", col:" + newPositionCapture.getColumn());
-                    System.out.println("Pawn can capture");
+//                    System.out.println("Pawn can capture");
                     newMove(captureRow, newPositionCapture, promoRow, PawnMoves);
                 }
             }

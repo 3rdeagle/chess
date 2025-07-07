@@ -237,7 +237,30 @@ public class ChessGame implements Cloneable{
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        /* very similar to checkmate
+        First we check if in check, however if that is true can't be stalemate then??
+        If its not in check then we can see if there are any valid moves, similar to checkmate
+         */
+
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+
+        ChessBoard currBoard = getBoard();
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = currBoard.getPiece(position);
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> legal = validMoves(position); // get all the legal moves for that piece if its same team color
+                    if (!legal.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+
     }
 
     /**

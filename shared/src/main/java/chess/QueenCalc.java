@@ -38,7 +38,7 @@ public class QueenCalc {
 
                 if (occupant == null) {
                     QueenMoves.add(new ChessMove(position, newPosition, null));
-                    System.out.println("Queen can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                    System.out.println("Queen can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                     continue; // continues because there was nothing blocking so further along the direction might be available
                 }
                 if (occupant.getTeamColor() == startPiece.getTeamColor()) {
@@ -46,7 +46,7 @@ public class QueenCalc {
                 }
                 if (occupant.getTeamColor() != startPiece.getTeamColor()) {
                     QueenMoves.add(new ChessMove(position, newPosition, null));
-                    System.out.println("Queen can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                    System.out.println("Queen can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                     break; // We can't go any further
                 } else {
                     break;

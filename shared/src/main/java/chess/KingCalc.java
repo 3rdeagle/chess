@@ -38,14 +38,14 @@ public class KingCalc {
 
             if (occupant == null) {
                 KingMoves.add(new ChessMove(position, newPosition, null));
-                System.out.println("King can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                System.out.println("King can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
             }
             else if (occupant.getTeamColor() == startPiece.getTeamColor()) {
                 continue;  // just break no added move because we can't take our own piece
             }
             else if (occupant.getTeamColor() != startPiece.getTeamColor()) {
                 KingMoves.add(new ChessMove(position, newPosition, null));
-                System.out.println("King can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                System.out.println("King can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
             }
         }
         return KingMoves;

@@ -40,7 +40,7 @@ public class BishopCalc {
 
                 if (occupant == null) {
                     BisMoves.add(new ChessMove(position, newPosition, null ));
-                    System.out.println("Bishop can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                    System.out.println("Bishop can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                     continue;
                 }
                 if (occupant.getTeamColor() == startPiece.getTeamColor()) {
@@ -48,7 +48,7 @@ public class BishopCalc {
                 }
                 if (occupant.getTeamColor() != startPiece.getTeamColor()) {
                     BisMoves.add(new ChessMove(position, newPosition, null));
-                    System.out.println("Bishop can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                    System.out.println("Bishop can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                     break; // We can't go any further
                 } else {
                     break;

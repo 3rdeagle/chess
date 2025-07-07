@@ -36,14 +36,14 @@ public class KnightCalc {
 
             if (occupant == null) {
                 KnightMoves.add(new ChessMove(position, newPosition, null));
-                System.out.println("Knight can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                System.out.println("Knight can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
             }
             else if (occupant.getTeamColor() == startPiece.getTeamColor()) {
                 continue;  // just break no added move because we can't take our own piece
             }
             else if (occupant.getTeamColor() != startPiece.getTeamColor()) {
                 KnightMoves.add(new ChessMove(position, newPosition, null));
-                System.out.println("Knight can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                System.out.println("Knight can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
             }
         }
         return KnightMoves;

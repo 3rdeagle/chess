@@ -39,14 +39,14 @@ public class RookCalc {
 
                 if (occupant == null) {
                     RookMoves.add(new ChessMove(position, newPosition, null));
-                    System.out.println("Rook can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                    System.out.println("Rook can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                 }
                 else if (occupant.getTeamColor() == startPiece.getTeamColor()) {
                     break;  // just break no added move because we can't take our own piece
                 }
                 else if (occupant.getTeamColor() != startPiece.getTeamColor()) {
                     RookMoves.add(new ChessMove(position, newPosition, null));
-                    System.out.println("Rook can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+//                    System.out.println("Rook can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                     break; // We can't go any further
                 } else {
                     break;
