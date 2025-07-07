@@ -70,9 +70,11 @@ public class ChessGame implements Cloneable{
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = getBoard().getPiece(startPosition);
+
         if (piece == null) {
             return new ArrayList<>(); // return an empty list
         }
+        TeamColor team = piece.getTeamColor();
         // get all of the potential moves from pieceMoves calculator
         Collection<ChessMove> potentialMoves = piece.pieceMoves(board, startPosition);
         List<ChessMove> allowedMoves = new ArrayList<>();
@@ -80,7 +82,7 @@ public class ChessGame implements Cloneable{
             ChessGame copy = this.clone(); // create the deep copy of the game
                 copy.simpleMove(copy.getBoard(), move);
 
-            if (!copy.isInCheck(copy.currentTurn)) { // if the copy isn't in check from that move then add it
+            if (!copy.isInCheck(team)) { // if the copy isn't in check from that move then add it
               allowedMoves.add(move);
             }
        }
