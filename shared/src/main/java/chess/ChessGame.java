@@ -3,6 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -16,6 +17,7 @@ public class ChessGame implements Cloneable{
     public ChessGame() {
         this.currentTurn = TeamColor.WHITE;
         this.board  = new ChessBoard();
+        this.board.resetBoard();
     }
 
     /**
@@ -202,7 +204,29 @@ public class ChessGame implements Cloneable{
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        /* See if in check
+        then see if there are any legal moves
+        if not it is in checkmate
+         */
+
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+
+        ChessBoard currBoard = getBoard();
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = currBoard.getPiece(position);
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> legal = validMoves(position); // get all the legal moves for that piece if its same team color
+                    if (!legal.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true; // not a single legal move to save it from check, thus checkmate
     }
 
     /**
@@ -247,6 +271,17 @@ public class ChessGame implements Cloneable{
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(board, chessGame.board) && currentTurn == chessGame.currentTurn;
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, currentTurn);
+    }
 }
