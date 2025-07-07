@@ -71,7 +71,7 @@ public class ChessGame implements Cloneable{
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPiece piece = getBoard().getPiece(startPosition);
+        ChessPiece piece = board.getPiece(startPosition);
 
         if (piece == null) {
             return new ArrayList<>(); // return an empty list
@@ -105,7 +105,7 @@ public class ChessGame implements Cloneable{
         ChessPosition end = move.getEndPosition();
         ChessPiece piece = board.getPiece(start);
 
-
+        // Throw exceptions if null, not teams turn, or if the move is not a valid move
         if (piece == null) {
             throw new InvalidMoveException(STR."No piece at start\{start}");
         }
@@ -213,11 +213,10 @@ public class ChessGame implements Cloneable{
             return false;
         }
 
-        ChessBoard currBoard = getBoard();
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPosition position = new ChessPosition(row, col);
-                ChessPiece piece = currBoard.getPiece(position);
+                ChessPiece piece = board.getPiece(position);
                 if (piece != null && piece.getTeamColor() == teamColor) {
                     Collection<ChessMove> legal = validMoves(position); // get all the legal moves for that piece if its same team color
                     if (!legal.isEmpty()) {
@@ -246,11 +245,10 @@ public class ChessGame implements Cloneable{
             return false;
         }
 
-        ChessBoard currBoard = getBoard();
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPosition position = new ChessPosition(row, col);
-                ChessPiece piece = currBoard.getPiece(position);
+                ChessPiece piece = board.getPiece(position);
                 if (piece != null && piece.getTeamColor() == teamColor) {
                     Collection<ChessMove> legal = validMoves(position); // get all the legal moves for that piece if its same team color
                     if (!legal.isEmpty()) {
