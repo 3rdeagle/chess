@@ -114,7 +114,7 @@ public class ChessGame implements Cloneable{
         }
 
         Collection<ChessMove> allowedMoves = validMoves(start);
-        if (allowedMoves == null || !allowedMoves.contains(move)) {
+        if (allowedMoves == null || !allowedMoves.contains(move)) { // check if the move is in allowed moves.
             throw new InvalidMoveException(STR."Illegal move bud\{move}");
         }
 
