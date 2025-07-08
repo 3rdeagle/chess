@@ -107,7 +107,7 @@ public class ChessGame implements Cloneable{
 
         // Throw exceptions if null, not teams turn, or if the move is not a valid move
         if (piece == null) {
-            throw new InvalidMoveException(STR."No piece at start\{start}");
+            throw new InvalidMoveException("No piece at start");
         }
         if (piece.getTeamColor() != currentTurn) {
             throw new InvalidMoveException("Not right colors turn");
@@ -115,7 +115,7 @@ public class ChessGame implements Cloneable{
 
         Collection<ChessMove> allowedMoves = validMoves(start);
         if (allowedMoves == null || !allowedMoves.contains(move)) { // check if the move is in allowed moves.
-            throw new InvalidMoveException(STR."Illegal move bud\{move}");
+            throw new InvalidMoveException("Illegal move bud");
         }
 
         board.addPiece(start, null); // We essentially pick it up and remove it from the board
