@@ -12,6 +12,7 @@ import model.UserData;
 
 import javax.xml.crypto.Data;
 import java.util.Map;
+import java.util.Objects;
 
 public class Server {
 
@@ -38,7 +39,8 @@ public class Server {
         Spark.delete("/db", this::deleteDatabase);
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::loginUser);
-        Spark.delete("/session", );
+        Spark.delete("/session", this::logoutUser);
+        Spark.get("/game", this::listGames);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -73,7 +75,16 @@ public class Server {
     }
 
     private Object logoutUser(Request req, Response res) throws DataAccessException {
-        LogoutRequest logoutRequest = new Gson().fromJson(req.body(), LogoutRequest.class);
-        LogoutResult logoutResult = userService.logout(logoutRequest);
+        String authToken = req.headers("Authorization");
+//        LogoutRequest logoutRequest = new Gson().fromJson(req.body(), LogoutRequest.class);
+        userService.logout(authToken);
+        res.status(200);
+
+        return "{}";
+    }
+
+    private Objects listGames(Request req, Response res) throws DataAccessException {
+        String authToken = req.headers("Authorization");
+
     }
 }

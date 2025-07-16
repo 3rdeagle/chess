@@ -55,13 +55,12 @@ public class UserService {
         return new LoginResult(logUser.username(), authToken);
     }
 
-    public void logout(LogoutRequest request) throws DataAccessException{
-        AuthData logoutAuth = authDao.getAuth(request.authToken());
-        if (logoutAuth.authToken() == null) {
+    public void logout(String authToken) throws DataAccessException{
+        AuthData logoutAuth = authDao.getAuth(authToken);
+        if (logoutAuth == null) {
             throw new DataAccessException("No such Authorization Token");
         }
-
-        deleteAuth
+        authDao.deleteAuth(logoutAuth.authToken());
     }
 
 
