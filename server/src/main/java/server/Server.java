@@ -3,12 +3,14 @@ package server;
 import com.google.gson.Gson;
 
 import dataaccess.DataAccessException;
-import service.requests.RegisterRequest;
-import service.results.RegisterResult;
+import service.requests.*;
+import service.results.*;
 import spark.*;
 import service.ClearService;
 import service.UserService;
 import model.UserData;
+
+import javax.xml.crypto.Data;
 import java.util.Map;
 
 public class Server {
@@ -35,7 +37,8 @@ public class Server {
 
         Spark.delete("/db", this::deleteDatabase);
         Spark.post("/user", this::registerUser);
-
+        Spark.post("/session", this::loginUser);
+        Spark.delete("/session", );
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -59,5 +62,18 @@ public class Server {
             res.status(200);
             return new Gson().toJson(regResult);
 
+    }
+
+    private Object loginUser(Request req, Response res) throws DataAccessException {
+        LoginRequest loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
+        LoginResult loginResult = userService.login(loginRequest);
+
+        res.status(200);
+        return new Gson().toJson(loginResult);
+    }
+
+    private Object logoutUser(Request req, Response res) throws DataAccessException {
+        LogoutRequest logoutRequest = new Gson().fromJson(req.body(), LogoutRequest.class);
+        LogoutResult logoutResult = userService.logout(logoutRequest);
     }
 }

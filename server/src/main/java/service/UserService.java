@@ -6,7 +6,10 @@ import model.AuthData;
 import model.UserData;
 import dataaccess.UserDao;
 import service.requests.*;
+import service.results.LoginResult;
 import service.results.RegisterResult;
+
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -37,10 +40,28 @@ public class UserService {
         return new RegisterResult(newUser.username(), authToken);
     }
 
-    public RegisterResult login(LoginRequest request) {
-        if (userDao.getUser(request.username()) )
+    public LoginResult login(LoginRequest request) throws DataAccessException {
+        if (userDao.getUser(request.username()) == null ) {
+            throw new DataAccessException("No such username");
+        }
 
-        return login;
+        UserData logUser = userDao.getUser(request.username());
+        if (!Objects.equals(logUser.password(), request.password()))
+            throw new DataAccessException("Wrong Password");
+
+        String authToken = UUID.randomUUID().toString();
+        authDao.createAuth(new AuthData(authToken, logUser.username()));
+
+        return new LoginResult(logUser.username(), authToken);
+    }
+
+    public void logout(LogoutRequest request) throws DataAccessException{
+        AuthData logoutAuth = authDao.getAuth(request.authToken());
+        if (logoutAuth.authToken() == null) {
+            throw new DataAccessException("No such Authorization Token");
+        }
+
+        deleteAuth
     }
 
 
