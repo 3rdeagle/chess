@@ -4,6 +4,7 @@ import dataaccess.*;
 import server.Server;
 
 import service.ClearService;
+import service.GameService;
 import service.UserService;
 import spark.Spark;
 
@@ -18,8 +19,9 @@ public class Main {
 
         ClearService clearService = new ClearService(userDao, authDao, gameDao);
         UserService  userService  = new UserService(userDao, authDao);
+        GameService gameService = new GameService(userDao, authDao, gameDao);
 
-        new Server(clearService, userService).run(8080);
+        new Server(clearService, userService, gameService).run(8080);
         Spark.get("/hello", (req, res) -> "Hello Chess!");
     }
 }

@@ -3,6 +3,8 @@ package server;
 import com.google.gson.Gson;
 
 import dataaccess.DataAccessException;
+import model.GameData;
+import service.GameService;
 import service.requests.*;
 import service.results.*;
 import spark.*;
@@ -11,6 +13,7 @@ import service.UserService;
 import model.UserData;
 
 import javax.xml.crypto.Data;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -18,9 +21,10 @@ public class Server {
 
     private final ClearService clearService;
     private final UserService userService;
+    private final GameService gameService;
 
-    public Server(ClearService clearService, UserService userService) {//
-
+    public Server(ClearService clearService, UserService userService, GameService gameService) {//
+        this.gameService = gameService;
         this.clearService = clearService;
         this.userService = userService;
 
@@ -83,8 +87,9 @@ public class Server {
         return "{}";
     }
 
-    private Objects listGames(Request req, Response res) throws DataAccessException {
+    private Object listGames(Request req, Response res) throws DataAccessException {
         String authToken = req.headers("Authorization");
-
+        var gamesList = gameService.listGames(authToken).toArray();
+        return new Gson().toJson(Map.of("games", gamesList));
     }
 }

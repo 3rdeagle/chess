@@ -5,7 +5,11 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDao;
+import model.AuthData;
+import model.GameData;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 
 public class GameService {
@@ -18,7 +22,11 @@ public class GameService {
         this.userDao = userDao;
     }
 
-    public Collection<ChessGame> listGames(String authToken) throws DataAccessException {
-        
+    public Collection<GameData> listGames(String authToken) throws DataAccessException {
+        AuthData logoutAuth = authDao.getAuth(authToken);
+        if (logoutAuth == null) {
+            throw new DataAccessException("Not Authorized");
+        }
+        return gameDao.listGames();
     }
 }
