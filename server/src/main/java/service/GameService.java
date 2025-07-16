@@ -44,7 +44,13 @@ public class GameService {
         String black = game.blackUsername();
 
         if (white != null && black != null) {
-            throw new DataAccessException("Game is full");
+            throw new DataAccessException("Full");
+        }
+        if (playerColor.equals("WHITE") && white != null) {
+            throw new DataAccessException("already taken");
+        }
+        if (playerColor.equals("BLACK") && black != null) {
+            throw new DataAccessException("already taken");
         }
 
         AuthData user = authDao.getAuth(authToken);
