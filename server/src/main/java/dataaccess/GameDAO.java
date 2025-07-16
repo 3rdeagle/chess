@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.GameData;
 import service.requests.CreateGameRequest;
+import service.requests.JoinGameRequest;
 
 import java.util.List;
 
@@ -11,5 +12,9 @@ public interface GameDAO {
 
     public List<GameData> listGames();
 
-    public GameData createGame(String authToken, CreateGameRequest newGame) throws DataAccessException;
+    public GameData createGame(CreateGameRequest newGame);
+
+    public GameData getGame(int gameID);
+
+    public void updateGame(GameData update);
 }

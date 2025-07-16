@@ -8,7 +8,9 @@ import dataaccess.UserDao;
 import model.AuthData;
 import model.GameData;
 import service.requests.CreateGameRequest;
+import service.requests.JoinGameRequest;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collection;
@@ -24,19 +26,43 @@ public class GameService {
     }
 
     public Collection<GameData> listGames(String authToken) throws DataAccessException {
-        AuthData logoutAuth = authDao.getAuth(authToken);
-        if (logoutAuth == null) {
-            throw new DataAccessException("Not Authorized");
-        }
+        checkAuthorization(authToken);
         return gameDao.listGames();
     }
 
     public GameData createGames(String authToken, CreateGameRequest gameName) throws DataAccessException {
-        AuthData logoutAuth = authDao.getAuth(authToken);
-        if (logoutAuth == null) {
+        checkAuthorization(authToken);
+        return gameDao.createGame(gameName);
+    }
+
+    public void joinGame(String authToken, JoinGameRequest request) throws DataAccessException{
+        checkAuthorization(authToken);
+        int gameId = request.gameID();
+        String playerColor = request.playerColor();
+        GameData game = gameDao.getGame(gameId);
+        String white = game.whiteUsername();
+        String black = game.blackUsername();
+
+        if (white != null && black != null) {
+            throw new DataAccessException("Game is full");
+        }
+
+        AuthData user = authDao.getAuth(authToken);
+        String joinUsername = user.username();
+
+        if (playerColor.equals("WHITE")) {
+            white = joinUsername;
+        } else {
+            black = user.username();
+        }
+        GameData update = new GameData(game.gameID(), white, black, game.gameName(), game.game());
+        gameDao.updateGame(update);
+    }
+
+    public void checkAuthorization(String authToken) throws DataAccessException{
+        AuthData Auth = authDao.getAuth(authToken);
+        if (Auth == null) {
             throw new DataAccessException("Not Authorized");
         }
-        return gameDao.createGame(authToken, gameName);
-
     }
 }

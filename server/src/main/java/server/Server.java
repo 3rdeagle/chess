@@ -13,9 +13,11 @@ import service.UserService;
 import model.UserData;
 
 import javax.xml.crypto.Data;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Server {
 
@@ -46,6 +48,7 @@ public class Server {
         Spark.delete("/session", this::logoutUser);
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -84,13 +87,13 @@ public class Server {
 //        LogoutRequest logoutRequest = new Gson().fromJson(req.body(), LogoutRequest.class);
         userService.logout(authToken);
         res.status(200);
-
         return "{}";
     }
 
     private Object listGames(Request req, Response res) throws DataAccessException {
         String authToken = req.headers("Authorization");
-        var gamesList = gameService.listGames(authToken).toArray();
+        Collection<GameData> gamesList = gameService.listGames(authToken);
+        res.status(200);
         return new Gson().toJson(Map.of("games", gamesList));
     }
 
@@ -101,4 +104,13 @@ public class Server {
         var gameID = game.gameID();
         return new Gson().toJson(Map.of("gameID", gameID));
     }
+
+    private Object joinGame(Request req, Response res)throws DataAccessException {
+        String authToken = req.headers("Authorization");
+        JoinGameRequest gameName = new Gson().fromJson(req.body(), JoinGameRequest.class);
+        gameService.joinGame(authToken, gameName);
+        res.status(200);
+        return "{}";
+    }
+
 }
