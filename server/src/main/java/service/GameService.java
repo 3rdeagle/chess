@@ -7,6 +7,7 @@ import dataaccess.GameDAO;
 import dataaccess.UserDao;
 import model.AuthData;
 import model.GameData;
+import service.requests.CreateGameRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,5 +29,14 @@ public class GameService {
             throw new DataAccessException("Not Authorized");
         }
         return gameDao.listGames();
+    }
+
+    public GameData createGames(String authToken, CreateGameRequest gameName) throws DataAccessException {
+        AuthData logoutAuth = authDao.getAuth(authToken);
+        if (logoutAuth == null) {
+            throw new DataAccessException("Not Authorized");
+        }
+        return gameDao.createGame(authToken, gameName);
+
     }
 }

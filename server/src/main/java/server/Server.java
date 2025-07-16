@@ -45,6 +45,7 @@ public class Server {
         Spark.post("/session", this::loginUser);
         Spark.delete("/session", this::logoutUser);
         Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -91,5 +92,13 @@ public class Server {
         String authToken = req.headers("Authorization");
         var gamesList = gameService.listGames(authToken).toArray();
         return new Gson().toJson(Map.of("games", gamesList));
+    }
+
+    private Object createGame(Request req, Response res)throws DataAccessException {
+        String authToken = req.headers("Authorization");
+        CreateGameRequest gameName = new Gson().fromJson(req.body(), CreateGameRequest.class);
+        var game = gameService.createGames(authToken, gameName);
+        var gameID = game.gameID();
+        return new Gson().toJson(Map.of("gameID", gameID));
     }
 }
