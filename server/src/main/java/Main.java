@@ -1,7 +1,6 @@
 import chess.*;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDao;
+
+import dataaccess.*;
 import server.Server;
 
 import service.ClearService;
@@ -12,7 +11,15 @@ public class Main {
     public static void main(String[] args) {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Server: " + piece);
-        new Server().run(8080);
+
+        UserDao userDao  = new MemoryUserDAO();
+        AuthDAO authDao  = new MemoryAuthDAO();
+        GameDAO gameDao  = new MemoryGameDAO();
+
+        ClearService clearService = new ClearService(userDao, authDao, gameDao);
+        UserService  userService  = new UserService(userDao, authDao);
+
+        new Server(clearService, userService).run(8080);
         Spark.get("/hello", (req, res) -> "Hello Chess!");
     }
 }

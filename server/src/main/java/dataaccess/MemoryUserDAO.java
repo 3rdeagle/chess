@@ -15,10 +15,13 @@ public class MemoryUserDAO implements UserDao{
         if (users.putIfAbsent(user.username(), user) != null) {
             throw new DataAccessException("Username Already Taken");
         }
+        // put the user data into the database
     }
 
     public UserData getUser(String username) {
         return users.get(username);
     }
+
+
 
 }

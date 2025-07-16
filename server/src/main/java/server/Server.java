@@ -1,25 +1,26 @@
 package server;
 
 import com.google.gson.Gson;
-import static spark.Spark.*;
 
+import dataaccess.DataAccessException;
 import service.requests.RegisterRequest;
 import service.results.RegisterResult;
-import spark.*; // WHY WON'T THIS WORK?????
+import spark.*;
 import service.ClearService;
 import service.UserService;
 import model.UserData;
+import java.util.Map;
 
 public class Server {
-//    private final WebSocketHandler webSocketHandler;
+
     private final ClearService clearService;
     private final UserService userService;
 
-    public Server(ClearService clearService, UserService userService) {
+    public Server(ClearService clearService, UserService userService) {//
 
         this.clearService = clearService;
         this.userService = userService;
-//        webSocketHandler = new WebSocketHandler();
+
     }
 
     public int run(int desiredPort) {
@@ -30,10 +31,10 @@ public class Server {
         // Register your endpoints and handle exceptions here.
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
-//        Spark.init();
+        Spark.init();
 
         Spark.delete("/db", this::deleteDatabase);
-        Spark.post("/user", this::addUser);
+        Spark.post("/user", this::registerUser);
 
 
         Spark.awaitInitialization();
@@ -51,18 +52,12 @@ public class Server {
         return "";
     }
 
-    private Object registerUser(Request req, Response res) {
-        try {
+    private Object registerUser(Request req, Response res) throws DataAccessException {
             RegisterRequest regRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
             RegisterResult regResult = userService.registerUser(regRequest);
 
             res.status(200);
             return new Gson().toJson(regResult);
-        } catch (AlreadyTakenException e) {
-            res.status(403);
-            return e;
-        }
-
 
     }
 }

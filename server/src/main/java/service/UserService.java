@@ -1,14 +1,13 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import dataaccess.UserDao;
-import service.requests.RegisterRequest;
+import service.requests.*;
 import service.results.RegisterResult;
 import java.util.UUID;
-
-
 
 
 public class UserService {
@@ -19,19 +18,32 @@ public class UserService {
         this.authDao = authDao;
     }
 
-    public RegisterResult registerUser(RegisterRequest request) {
-        if (request == null || request.username() == null || request.email() == null || request.password() == null) {
-            // throw bad request some how??
-        }
+    public RegisterResult registerUser(RegisterRequest request) throws DataAccessException {
+//        if (request == null || request.username() == null || request.email() == null || request.password() == null) {
+//            // throw bad request some how??
+//        }
 
         // if the username is already taken
         if (userDao.getUser(request.username()) != null) {
-         throw new AlreadyTakenException();
+         throw new DataAccessException("Error");
         }
+
+        UserData newUser = new UserData(request.username(), request.password(), request.email());
+        userDao.createUser(newUser);
 
         String authToken = UUID.randomUUID().toString();
         authDao.createAuth(new AuthData(authToken, request.username()));
 
-        return new RegisterResult(request.username(), authToken);
-        }
+        return new RegisterResult(newUser.username(), authToken);
     }
+
+    public RegisterResult login(LoginRequest request) {
+        if (userDao.getUser(request.username()) )
+
+        return login;
+    }
+
+
+}
+
+
