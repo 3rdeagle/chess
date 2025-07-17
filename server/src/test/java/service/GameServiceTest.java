@@ -16,20 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
     private GameService gameService;
-    private ClearService clearService;
     private UserService userService;
-    private UserDao userDao;
     private GameDAO gameDao;
-    private AuthDAO authDao;
 
     @BeforeEach
     void setUp() {
-        userDao = new MemoryUserDAO();
-        authDao = new MemoryAuthDAO();
+        UserDao userDao = new MemoryUserDAO();
+        AuthDAO authDao = new MemoryAuthDAO();
         gameDao = new MemoryGameDAO();
 
         gameService = new GameService(authDao,gameDao);
-        clearService = new ClearService(userDao,authDao,gameDao);
         userService = new UserService(userDao, authDao);
     }
 

@@ -38,7 +38,7 @@ class ClearServiceTest {
         GameData game = gameService.createGames(result.authToken(), gameRequest);
 
         clearService.clear();
-        
+
         GameData updated = gameDao.getGame(game.gameID());
         assertNull(updated);
     }

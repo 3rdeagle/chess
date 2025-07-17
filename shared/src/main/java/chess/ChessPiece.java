@@ -55,11 +55,8 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         // call piece calc which then figures out which piece calculates moves and should then return all possible moves to here
         PieceCalc moves = new PieceCalc(board,myPosition);
-        Collection<ChessMove> Pmoves = moves.calculateMoves(board);
-//        for (ChessMove move : Pmoves) {
-//            System.out.println(move);
-//        }
-        return Pmoves;
+        Collection<ChessMove> pieceMoves = moves.calculateMoves(board);
+        return pieceMoves;
     }
 
     @Override

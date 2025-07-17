@@ -60,8 +60,8 @@ public class GameService {
     }
 
     public void checkAuthorization(String authToken) throws DataAccessException{
-        AuthData Auth = authDao.getAuth(authToken);
-        if (Auth == null) {
+        AuthData auth = authDao.getAuth(authToken);
+        if (auth == null) {
             throw new DataAccessException("Not Authorized");
         }
     }

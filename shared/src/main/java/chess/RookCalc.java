@@ -13,7 +13,7 @@ public class RookCalc {
     }
 
     public Collection<ChessMove> calcRookMoves() {
-        ArrayList<ChessMove> RookMoves = new java.util.ArrayList<>();
+        ArrayList<ChessMove> rookMoves = new java.util.ArrayList<>();
         int startCol = position.getColumn(); // starting column
         int startRow = position.getRow(); // starting row
         var startPiece = board.getPiece(new ChessPosition(startRow, startCol)); // Getting the Piece that is stored on the board
@@ -38,14 +38,14 @@ public class RookCalc {
                 var occupant = board.getPiece(newPosition);              // See what piece is on the new potential spot
 
                 if (occupant == null) {
-                    RookMoves.add(new ChessMove(position, newPosition, null));
+                    rookMoves.add(new ChessMove(position, newPosition, null));
 //                    System.out.println("Rook can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                 }
                 else if (occupant.getTeamColor() == startPiece.getTeamColor()) {
                     break;  // just break no added move because we can't take our own piece
                 }
                 else if (occupant.getTeamColor() != startPiece.getTeamColor()) {
-                    RookMoves.add(new ChessMove(position, newPosition, null));
+                    rookMoves.add(new ChessMove(position, newPosition, null));
 //                    System.out.println("Rook can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                     break; // We can't go any further
                 } else {
@@ -53,6 +53,6 @@ public class RookCalc {
                 }
             }
         }
-        return RookMoves;
+        return rookMoves;
     }
 }

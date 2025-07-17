@@ -136,7 +136,8 @@ public class Server {
         try {
             String authToken = req.headers("Authorization");
             JoinGameRequest gameName = new Gson().fromJson(req.body(), JoinGameRequest.class);
-            if (gameName == null || gameName.playerColor() == null || gameName.gameID() <= 0 || (!gameName.playerColor().equals("WHITE") && !gameName.playerColor().equals("BLACK"))) {
+            if (gameName == null || gameName.playerColor() == null || gameName.gameID() <= 0 ||
+                    (!gameName.playerColor().equals("WHITE") && !gameName.playerColor().equals("BLACK"))) {
                 res.status(400);
                 return new Gson().toJson(Map.of("message", "Error: bad request"));
             }

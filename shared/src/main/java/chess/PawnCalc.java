@@ -21,23 +21,21 @@ public class PawnCalc {
         }
     }
 
-    public void newMove(int row, ChessPosition newPosition, int promoRow, ArrayList<ChessMove> PawnMoves) {
-        ChessPiece.PieceType[] promotions = new ChessPiece.PieceType[]{ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
+    public void newMove(int row, ChessPosition newPosition, int promoRow, ArrayList<ChessMove> pawnMoves) {
+        ChessPiece.PieceType[] promotions = new ChessPiece.PieceType[]{ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
 
         if (row == promoRow){
             for (var promo : promotions) {
-                PawnMoves.add(new ChessMove(position, newPosition, promo));
-//                System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn() + " and be promoted");
+                pawnMoves.add(new ChessMove(position, newPosition, promo));
             }
         } else {
-            PawnMoves.add(new ChessMove(position, newPosition, null));
-//            System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
-
+            pawnMoves.add(new ChessMove(position, newPosition, null));
         }
     }
 
     public Collection<ChessMove> calcPawnMoves() {
-        ArrayList<ChessMove> PawnMoves = new ArrayList<>();
+        ArrayList<ChessMove> pawnMoves = new ArrayList<>();
         int startCol = position.getColumn(); // starting column
         int startRow = position.getRow(); // starting row
         var startPiece = board.getPiece(new ChessPosition(startRow, startCol)); // Getting the Piece that is stored on the board
@@ -78,9 +76,7 @@ public class PawnCalc {
         var occupant = board.getPiece(newPosition);              // See what piece is on the new potential spot
 
         if (inbounds(newRow, newCol) && (occupant == null)) {
-            newMove(newRow, newPosition, promoRow, PawnMoves);
-//            PawnMoves.add(new ChessMove(position, newPosition, null));  // add the one step to it
-//            System.out.println("Pawn can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
+            newMove(newRow, newPosition, promoRow, pawnMoves);
             // Check for 2nd step if at setup position
             if (startRow == startSetup) {
                 int twoRow = startRow + dr2;
@@ -90,8 +86,7 @@ public class PawnCalc {
                 var occupantTwo = board.getPiece(newPositionTwo);              // See what piece is on the new potential spot
 
                 if (occupantTwo == null) { // shouldn't need to check inbounds as we can only do a 2 move from our initial setup position
-                    PawnMoves.add(new ChessMove(position, newPositionTwo, null)); // never need to check for promotion only happens at start
-//                    System.out.println("Pawn can move to row:" + newPositionTwo.getRow() + ", col:" + newPositionTwo.getColumn());
+                    pawnMoves.add(new ChessMove(position, newPositionTwo, null)); // never need to check for promotion only happens at start
                 }
             }
         }
@@ -107,14 +102,11 @@ public class PawnCalc {
                 var occupantCapture = board.getPiece(newPositionCapture);              // See what piece is on the new potential spot
 
                 if (occupantCapture != null && (occupantCapture.getTeamColor() != startPiece.getTeamColor())){
-//                    PawnMoves.add(new ChessMove(position, newPositionCapture, null));
-//                    System.out.println("Pawn can capture to row:" + newPositionCapture.getRow() + ", col:" + newPositionCapture.getColumn());
-//                    System.out.println("Pawn can capture");
-                    newMove(captureRow, newPositionCapture, promoRow, PawnMoves);
+                    newMove(captureRow, newPositionCapture, promoRow, pawnMoves);
                 }
             }
         }
-        return PawnMoves;
+        return pawnMoves;
     }
 
 

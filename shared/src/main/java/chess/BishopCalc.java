@@ -14,7 +14,7 @@ public class BishopCalc {
     }
 
     public Collection<ChessMove> calcBisMoves() {
-        ArrayList<ChessMove> BisMoves = new java.util.ArrayList<>();
+        ArrayList<ChessMove> bisMoves = new java.util.ArrayList<>();
         int startCol = position.getColumn(); // starting column
         int startRow = position.getRow(); // starting row
         var startPiece = board.getPiece(new ChessPosition(startRow,startCol)); // Getting the Piece that is stored on the board
@@ -39,7 +39,7 @@ public class BishopCalc {
                 var occupant = board.getPiece(newPosition);
 
                 if (occupant == null) {
-                    BisMoves.add(new ChessMove(position, newPosition, null ));
+                    bisMoves.add(new ChessMove(position, newPosition, null ));
 //                    System.out.println("Bishop can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                     continue;
                 }
@@ -47,7 +47,7 @@ public class BishopCalc {
                     break;  // just break no added move because we can't take our own piece
                 }
                 if (occupant.getTeamColor() != startPiece.getTeamColor()) {
-                    BisMoves.add(new ChessMove(position, newPosition, null));
+                    bisMoves.add(new ChessMove(position, newPosition, null));
 //                    System.out.println("Bishop can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
                     break; // We can't go any further
                 } else {
@@ -61,6 +61,6 @@ public class BishopCalc {
 //            return the collection of Moves possible
             }
         }
-        return BisMoves;
+        return bisMoves;
     }
 }

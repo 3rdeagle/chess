@@ -11,12 +11,13 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessGame implements Cloneable{
+public class ChessGame implements Cloneable {
     private ChessBoard board;
     private TeamColor currentTurn;
+
     public ChessGame() {
         this.currentTurn = TeamColor.WHITE;
-        this.board  = new ChessBoard();
+        this.board = new ChessBoard();
         this.board.resetBoard();
     }
 
@@ -33,8 +34,8 @@ public class ChessGame implements Cloneable{
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-            this.currentTurn = team;
-        }
+        this.currentTurn = team;
+    }
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -82,12 +83,12 @@ public class ChessGame implements Cloneable{
         List<ChessMove> allowedMoves = new ArrayList<>();
         for (ChessMove move : potentialMoves) {
             ChessGame copy = this.clone(); // create the deep copy of the game
-                copy.simpleMove(copy.getBoard(), move);
+            copy.simpleMove(copy.getBoard(), move);
 
             if (!copy.isInCheck(team)) { // if the copy isn't in check from that move then add it
-              allowedMoves.add(move);
+                allowedMoves.add(move);
             }
-       }
+        }
         return allowedMoves;
         // We then say look is the move gonna put us in check, so somehow do a copy of the board and check all possilb emoves
         // the moves that do put us in check throw them out, and the ones that don't, keep.
@@ -122,7 +123,7 @@ public class ChessGame implements Cloneable{
 
         if (move.getPromotionPiece() == null) {
             board.addPiece(end, piece); // We then move the piece to the new spot
-        }  else {
+        } else {
             ChessPiece promotedPiece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
             board.addPiece(end, promotedPiece);
         }
@@ -132,7 +133,6 @@ public class ChessGame implements Cloneable{
         } else {
             currentTurn = TeamColor.WHITE;
         }
-
 
 
         // figure out which team goes
@@ -161,10 +161,10 @@ public class ChessGame implements Cloneable{
         ChessPosition kingPosition = null; // set a position we can fill once we find our teams king
 
         for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <= 8; col ++) {
+            for (int col = 1; col <= 8; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
-                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING  &&  piece.getTeamColor() == teamColor) {
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
                     kingPosition = position;
                     break;
                 }
@@ -213,19 +213,7 @@ public class ChessGame implements Cloneable{
             return false;
         }
 
-        for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <= 8; col++) {
-                ChessPosition position = new ChessPosition(row, col);
-                ChessPiece piece = board.getPiece(position);
-                if (piece != null && piece.getTeamColor() == teamColor) {
-                    Collection<ChessMove> legal = validMoves(position); // get all the legal moves for that piece if its same team color
-                    if (!legal.isEmpty()) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true; // not a single legal move to save it from check, thus checkmate
+        return checkLegalMoves(teamColor);
     }
 
     /**
@@ -244,7 +232,10 @@ public class ChessGame implements Cloneable{
         if (isInCheck(teamColor)) {
             return false;
         }
+        return checkLegalMoves(teamColor);
+    }
 
+    public boolean checkLegalMoves(TeamColor teamColor) {
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPosition position = new ChessPosition(row, col);
@@ -260,6 +251,8 @@ public class ChessGame implements Cloneable{
         return true;
 
     }
+
+
 
     /**
      * Sets this game's chessboard with a given board

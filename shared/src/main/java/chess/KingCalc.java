@@ -14,7 +14,7 @@ public class KingCalc {
     }
 
     public Collection<ChessMove> calcKingMoves() {
-        ArrayList<ChessMove> KingMoves = new java.util.ArrayList<>();
+        ArrayList<ChessMove> kingMoves = new java.util.ArrayList<>();
         int startCol = position.getColumn(); // starting column
         int startRow = position.getRow(); // starting row
         var startPiece = board.getPiece(new ChessPosition(startRow, startCol)); // Getting the Piece that is stored on the board
@@ -37,17 +37,17 @@ public class KingCalc {
             var occupant = board.getPiece(newPosition);              // See what piece is on the new potential spot
 
             if (occupant == null) {
-                KingMoves.add(new ChessMove(position, newPosition, null));
+                kingMoves.add(new ChessMove(position, newPosition, null));
 //                System.out.println("King can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
             }
             else if (occupant.getTeamColor() == startPiece.getTeamColor()) {
                 continue;  // just break no added move because we can't take our own piece
             }
             else if (occupant.getTeamColor() != startPiece.getTeamColor()) {
-                KingMoves.add(new ChessMove(position, newPosition, null));
+                kingMoves.add(new ChessMove(position, newPosition, null));
 //                System.out.println("King can move to row:" + newPosition.getRow() + ", col:" + newPosition.getColumn());
             }
         }
-        return KingMoves;
+        return kingMoves;
     }
 }

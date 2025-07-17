@@ -39,8 +39,9 @@ public class UserService {
         }
 
         UserData logUser = userDao.getUser(request.username());
-        if (!Objects.equals(logUser.password(), request.password()))
+        if (!Objects.equals(logUser.password(), request.password())) {
             throw new DataAccessException("Wrong Password");
+        }
 
         String authToken = UUID.randomUUID().toString();
         authDao.createAuth(new AuthData(authToken, logUser.username()));
