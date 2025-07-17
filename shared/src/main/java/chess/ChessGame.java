@@ -192,7 +192,8 @@ public class ChessGame implements Cloneable {
         return false;
     }
 
-    private static boolean endIsKing(ChessPiece enemyPiece, TeamColor enemyColor, ChessBoard board, ChessPosition enemyPosition, ChessPosition kingPosition) {
+    private static boolean endIsKing(ChessPiece enemyPiece, TeamColor enemyColor, ChessBoard board,
+                                     ChessPosition enemyPosition, ChessPosition kingPosition) {
         if (enemyPiece != null && enemyPiece.getTeamColor() == enemyColor) { //Problems with null potentially??
             Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(board, enemyPosition);
             for (ChessMove move : enemyMoves) {
