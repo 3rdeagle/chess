@@ -2,19 +2,18 @@ package dataaccess;
 
 import model.GameData;
 import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
 
 import java.util.List;
 
 public interface GameDAO {
 
-    public void clearGames();
+    void clearGames();
 
-    public List<GameData> listGames();
+    List<GameData> listGames();
 
-    public GameData createGame(CreateGameRequest newGame);
+    GameData createGame(CreateGameRequest newGame);
 
-    public GameData getGame(int gameID);
+    GameData getGame(int gameID);
 
-    public void updateGame(GameData update);
+    void updateGame(GameData update);
 }

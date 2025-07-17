@@ -8,10 +8,8 @@ import dataaccess.UserDao;
 import service.requests.*;
 import service.results.LoginResult;
 import service.results.RegisterResult;
-
 import java.util.Objects;
 import java.util.UUID;
-
 
 public class UserService {
     private final UserDao userDao;
@@ -22,13 +20,8 @@ public class UserService {
     }
 
     public RegisterResult registerUser(RegisterRequest request) throws DataAccessException {
-//        if (request == null || request.username() == null || request.email() == null || request.password() == null) {
-//            // throw bad request some how??
-//        }
-
-        // if the username is already taken
         if (userDao.getUser(request.username()) != null) {
-         throw new DataAccessException("Error");
+         throw new DataAccessException("Error: Username taken");
         }
 
         UserData newUser = new UserData(request.username(), request.password(), request.email());

@@ -1,11 +1,8 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
 import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +18,7 @@ public class MemoryGameDAO implements GameDAO{
     public List<GameData> listGames() {
         return new ArrayList<>(games.values());
     }
+
     //CreateGame
     public GameData createGame(CreateGameRequest newGame) {
         String gameName = newGame.gameName();

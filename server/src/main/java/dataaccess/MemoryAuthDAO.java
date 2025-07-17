@@ -1,7 +1,6 @@
 package dataaccess;
 
 import model.AuthData;
-import model.UserData;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,11 +14,6 @@ public class MemoryAuthDAO implements AuthDAO{
     public void createAuth(AuthData auth) {
         authTokens.put(auth.authToken(), auth);
     }
-
-    //deleteAuth
-    /* use the Authtoken in the map
-    remove the authoken
-     */
 
     //getAuth
     public AuthData getAuth(String authToken) {

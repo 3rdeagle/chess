@@ -16,16 +16,12 @@ public class Server {
     private final ClearService clearService;
     private final UserService userService;
 
-//    private final ClearService clearService;
-//    private final UserService userService;
-//    private final GameService gameService;
-
     public Server() {
         UserDao userDao  = new MemoryUserDAO();
         AuthDAO authDao  = new MemoryAuthDAO();
         GameDAO gameDao  = new MemoryGameDAO();
 
-        this.gameService = new GameService(userDao,authDao,gameDao);
+        this.gameService = new GameService(authDao,gameDao);
         this.clearService = new ClearService(userDao,authDao,gameDao);
         this.userService = new UserService(userDao, authDao);
     }
@@ -35,11 +31,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
-
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
-
+        //endpoints and handle exceptions here.
         Spark.delete("/db", this::deleteDatabase);
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::loginUser);
@@ -79,7 +71,6 @@ public class Server {
             res.status(403);
             return new Gson().toJson(Map.of("message", "Error Already Taken"));
         }
-
     }
 
     private Object loginUser(Request req, Response res) {
@@ -128,6 +119,10 @@ public class Server {
         try {
             String authToken = req.headers("Authorization");
             CreateGameRequest gameName = new Gson().fromJson(req.body(), CreateGameRequest.class);
+            if (gameName == null || gameName.gameName() == null) {
+                res.status(400);
+                return new Gson().toJson(Map.of("message", "Error: bad request"));
+            }
             var game = gameService.createGames(authToken, gameName);
             var gameID = game.gameID();
             return new Gson().toJson(Map.of("gameID", gameID));
@@ -159,5 +154,4 @@ public class Server {
             }
         }
     }
-
 }
