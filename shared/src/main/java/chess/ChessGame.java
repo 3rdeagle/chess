@@ -184,18 +184,26 @@ public class ChessGame implements Cloneable {
                 ChessPosition enemyPosition = new ChessPosition(row, col);
                 ChessPiece enemyPiece = board.getPiece(enemyPosition);
 
-                if (enemyPiece != null && enemyPiece.getTeamColor() == enemyColor) { //Problems with null potentially??
-                    Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(board, enemyPosition);
-                    for (ChessMove move : enemyMoves) {
-                        if (move.getEndPosition().equals(kingPosition)) {
-                            return true;
-                        }
-                    }
+                if (endIsKing(enemyPiece, enemyColor, board, enemyPosition, kingPosition)) {
+                    return true;
                 }
             }
         }
         return false;
     }
+
+    private static boolean endIsKing(ChessPiece enemyPiece, TeamColor enemyColor, ChessBoard board, ChessPosition enemyPosition, ChessPosition kingPosition) {
+        if (enemyPiece != null && enemyPiece.getTeamColor() == enemyColor) { //Problems with null potentially??
+            Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(board, enemyPosition);
+            for (ChessMove move : enemyMoves) {
+                if (move.getEndPosition().equals(kingPosition)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Determines if the given team is in checkmate
