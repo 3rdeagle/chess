@@ -11,6 +11,7 @@ import service.ClearService;
 import service.UserService;
 import java.util.Collection;
 import java.util.Map;
+
 public class Server {
     private final GameService gameService;
     private final ClearService clearService;
@@ -48,7 +49,7 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-
+    // Handlers for the data
     private Object deleteDatabase(Request req, Response res) {
         clearService.clear();
         res.status(200);
@@ -72,7 +73,7 @@ public class Server {
             return new Gson().toJson(Map.of("message", "Error Already Taken"));
         }
     }
-
+    
     private Object loginUser(Request req, Response res) {
         try {
             LoginRequest loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
