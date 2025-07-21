@@ -17,10 +17,21 @@ public class Server {
     private final ClearService clearService;
     private final UserService userService;
 
-    public Server() {
-        UserDao userDao  = new MemoryUserDAO();
-        AuthDAO authDao  = new MemoryAuthDAO();
-        GameDAO gameDao  = new MemoryGameDAO();
+    public Server() throws DataAccessException {
+        UserDao userDao;
+        AuthDAO authDao;
+        GameDAO gameDao;
+        boolean useSQL = true;
+
+        if (useSQL) {
+            userDao = new SQLUserDAO();
+            gameDao = new SQLGameDAO();
+            authDao = new SQLAuthDAO();
+        } else {
+            userDao = new MemoryUserDAO();
+            authDao  = new MemoryAuthDAO();
+            gameDao  = new MemoryGameDAO();
+        }
 
         this.gameService = new GameService(authDao,gameDao);
         this.clearService = new ClearService(userDao,authDao,gameDao);
@@ -50,7 +61,7 @@ public class Server {
         Spark.awaitStop();
     }
     // Handlers for the data
-    private Object deleteDatabase(Request req, Response res) {
+    private Object deleteDatabase(Request req, Response res) throws DataAccessException {
         clearService.clear();
         res.status(200);
         return "";

@@ -1,6 +1,5 @@
 package dataaccess;
 
-import com.google.gson.Gson;
 import model.AuthData;
 
 import java.sql.SQLException;
@@ -9,7 +8,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 import java.sql.*;
 
-public class SQLAuthDAO {
+public class SQLAuthDAO implements AuthDAO{
 
     public SQLAuthDAO() throws DataAccessException {
         configureDatabase();
@@ -36,13 +35,16 @@ public class SQLAuthDAO {
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new DataAccessException("Unable to read");
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to read authtoken", e);
         }
         return null;
     }
 
-
+    public void deleteAuth(String authToken) throws DataAccessException {
+        var statement = "DELETE FROM auth_tokens WHERE token=?";
+        executeUpdate(statement, authToken);
+    }
 
     private AuthData readAuth(ResultSet rs) throws SQLException {
         var id = rs.getString("token");
@@ -50,7 +52,7 @@ public class SQLAuthDAO {
         return new AuthData(id, username);
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+    private void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var prepStatement = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
@@ -58,9 +60,9 @@ public class SQLAuthDAO {
                     if (param instanceof String p) {
                         prepStatement.setString(i + 1, p);
                     }
-                    else if (param instanceof Integer p) {
-                        prepStatement.setInt(i + 1, p);
-                    }
+//                    else if (param instanceof Integer p) {
+//                        prepStatement.setInt(i + 1, p);
+//                    }
                     else if (param == null) {
                         prepStatement.setNull(i + 1, NULL);
                     }
@@ -69,9 +71,8 @@ public class SQLAuthDAO {
 
                 var rs = prepStatement.getGeneratedKeys();
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    rs.getInt(1);
                 }
-                return 0;
             }
         } catch (SQLException e) {
             throw new DataAccessException("Unable to update database");
