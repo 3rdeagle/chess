@@ -60,9 +60,6 @@ public class SQLAuthDAO implements AuthDAO{
                     if (param instanceof String p) {
                         prepStatement.setString(i + 1, p);
                     }
-//                    else if (param instanceof Integer p) {
-//                        prepStatement.setInt(i + 1, p);
-//                    }
                     else if (param == null) {
                         prepStatement.setNull(i + 1, NULL);
                     }

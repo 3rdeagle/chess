@@ -4,10 +4,10 @@ import model.UserData;
 
 public interface UserDao {
 
-    void clearUsers();
+    void clearUsers() throws DataAccessException;
 
     void createUser(UserData user) throws DataAccessException;
 
-    UserData getUser(String username);
+    UserData getUser(String username) throws DataAccessException;
 
 }
