@@ -1,7 +1,6 @@
 package dataaccess;
 
 import model.UserData;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -15,6 +14,7 @@ public class SQLUserDAO implements UserDao {
     }
 
     public void clearUsers() throws DataAccessException {
+        new SQLAuthDAO().clearAuth();
         var statement = "DELETE FROM users";
         executeUpdate(statement);
     }
@@ -73,7 +73,7 @@ public class SQLUserDAO implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to update database");
+            throw new DataAccessException("Unable to update database", e);
         }
     }
 
@@ -84,13 +84,15 @@ public class SQLUserDAO implements UserDao {
             `username` varchar(255) NOT NULL,
             `password` varchar(255) NOT NULL,
             `email` varchar(255) NOT NULL,
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            PRIMARY KEY (`username`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
             """
     };
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
+            System.out.println("Current catalog: " + conn.getCatalog());
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();

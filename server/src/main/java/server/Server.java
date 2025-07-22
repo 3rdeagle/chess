@@ -13,25 +13,14 @@ import java.util.Collection;
 import java.util.Map;
 
 public class Server {
-    private final GameService gameService;
-    private final ClearService clearService;
-    private final UserService userService;
+    private GameService gameService;
+    private ClearService clearService;
+    private UserService userService;
 
-    public Server() throws DataAccessException {
-        UserDao userDao;
-        AuthDAO authDao;
-        GameDAO gameDao;
-        boolean useSQL = true;
-
-        if (useSQL) {
-            userDao = new SQLUserDAO();
-            gameDao = new SQLGameDAO();
-            authDao = new SQLAuthDAO();
-        } else {
-            userDao = new MemoryUserDAO();
-            authDao  = new MemoryAuthDAO();
-            gameDao  = new MemoryGameDAO();
-        }
+    public Server() {
+        UserDao userDao = new MemoryUserDAO();
+        AuthDAO authDao  = new MemoryAuthDAO();
+        GameDAO gameDao  = new MemoryGameDAO();
 
         this.gameService = new GameService(authDao,gameDao);
         this.clearService = new ClearService(userDao,authDao,gameDao);
@@ -40,6 +29,18 @@ public class Server {
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
+        try {
+            UserDao sqlUserDao = new SQLUserDAO();
+            AuthDAO sqlAuthDao = new SQLAuthDAO();
+            GameDAO sqlGameDao = new SQLGameDAO();
+
+            this.userService = new UserService(sqlUserDao, sqlAuthDao);
+            this.clearService = new ClearService(sqlUserDao, sqlAuthDao, sqlGameDao);
+            this.gameService = new GameService(sqlAuthDao, sqlGameDao);
+
+        } catch (DataAccessException e) {
+            System.err.println("SQL failed");
+        }
 
         Spark.staticFiles.location("web");
 

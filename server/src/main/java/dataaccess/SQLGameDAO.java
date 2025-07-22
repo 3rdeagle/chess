@@ -24,7 +24,7 @@ public class SQLGameDAO implements GameDAO {
     }
 
     public List<GameData> listGames() throws DataAccessException{
-        var result = new ArrayList<>();
+        List<GameData> result = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game_json FROM games";
             try (var prepStatement = conn.prepareStatement(statement)) {
@@ -131,7 +131,6 @@ public class SQLGameDAO implements GameDAO {
             `gameName` varchar(255) DEFAULT NULL,
             `game_json` TEXT NOT NULL,
              PRIMARY KEY (`gameID`)
-            
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

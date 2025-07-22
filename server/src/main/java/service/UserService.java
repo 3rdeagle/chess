@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import dataaccess.UserDao;
+import org.mindrot.jbcrypt.BCrypt;
 import service.requests.*;
 import service.results.LoginResult;
 import service.results.RegisterResult;
@@ -24,7 +25,8 @@ public class UserService {
          throw new DataAccessException("Error: Username taken");
         }
 
-        UserData newUser = new UserData(request.username(), request.password(), request.email());
+        String hashedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
+        UserData newUser = new UserData(request.username(), hashedPassword, request.email());
         userDao.createUser(newUser);
 
         String authToken = UUID.randomUUID().toString();
@@ -39,9 +41,13 @@ public class UserService {
         }
 
         UserData logUser = userDao.getUser(request.username());
-        if (!Objects.equals(logUser.password(), request.password())) {
+        if (!BCrypt.checkpw(request.password(), logUser.password())) {
             throw new DataAccessException("Wrong Password");
         }
+
+//        if (!Objects.equals(logUser.password(), request.password())) {
+//            throw new DataAccessException("Wrong Password");
+//        }
 
         String authToken = UUID.randomUUID().toString();
         authDao.createAuth(new AuthData(authToken, logUser.username()));
