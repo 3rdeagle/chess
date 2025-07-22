@@ -22,7 +22,7 @@ public class UserService {
 
     public RegisterResult registerUser(RegisterRequest request) throws DataAccessException {
         if (userDao.getUser(request.username()) != null) {
-         throw new DataAccessException("Error: Username taken");
+         throw new DataAccessException("Error: Already Taken");
         }
 
         String hashedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
@@ -58,7 +58,7 @@ public class UserService {
     public void logout(String authToken) throws DataAccessException{
         AuthData logoutAuth = authDao.getAuth(authToken);
         if (logoutAuth == null) {
-            throw new DataAccessException("No such Authorization Token");
+            throw new DataAccessException("Unauthorized");
         }
         authDao.deleteAuth(logoutAuth.authToken());
     }

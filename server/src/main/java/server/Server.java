@@ -39,6 +39,7 @@ public class Server {
             this.gameService = new GameService(sqlAuthDao, sqlGameDao);
 
         } catch (DataAccessException e) {
+            String error = e.getMessage();
             System.err.println("SQL failed");
         }
 
@@ -61,11 +62,17 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
+
     // Handlers for the data
     private Object deleteDatabase(Request req, Response res) throws DataAccessException {
-        clearService.clear();
-        res.status(200);
-        return "";
+        try {
+            clearService.clear();
+            res.status(200);
+            return "";
+        } catch (DataAccessException e) {
+            res.status(500);
+            return new Gson().toJson(Map.of("message", "Error: Internal Server Error"));
+        }
     }
 
     private Object registerUser(Request req, Response res) {
@@ -81,8 +88,16 @@ public class Server {
             res.status(200);
             return new Gson().toJson(regResult);
         } catch (DataAccessException e) {
-            res.status(403);
-            return new Gson().toJson(Map.of("message", "Error Already Taken"));
+            String error = e.getMessage();
+            if (error.contains("Already Taken") || error.contains("Unauthorized") ||
+                    error.contains("No such username") || error.contains("Wrong Password")) {
+                res.status(403);
+                return new Gson().toJson(Map.of("message", "Error Already Taken"));
+            } else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", "Error: Internal Server Error"));
+            }
+
         }
     }
     
@@ -98,8 +113,15 @@ public class Server {
             res.status(200);
             return new Gson().toJson(loginResult);
         } catch (DataAccessException e) {
+            String error = e.getMessage();
+            if (error.contains("Unauthorized") || error.contains("No such username")
+                    || error.contains("Wrong Password")) {
             res.status(401);
             return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
+            } else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", "Error: Internal Server Error"));
+            }
         }
     }
 
@@ -111,8 +133,14 @@ public class Server {
             return "{}";
 
         } catch (DataAccessException e) {
-            res.status(401);
-            return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
+            String error = e.getMessage();
+            if (error.contains("Unauthorized")) {
+                res.status(401);
+                return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
+            } else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", "Error: Internal Server Error"));
+            }
         }
     }
 
@@ -123,8 +151,14 @@ public class Server {
             res.status(200);
             return new Gson().toJson(Map.of("games", gamesList));
         } catch (DataAccessException e) {
-            res.status(401);
-            return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
+            String error = e.getMessage();
+            if (error.contains("Unauthorized")) {
+                res.status(401);
+                return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
+            } else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", "Error: Internal Server Error"));
+            }
         }
     }
 
@@ -140,8 +174,14 @@ public class Server {
             var gameID = game.gameID();
             return new Gson().toJson(Map.of("gameID", gameID));
         } catch (DataAccessException e) {
-            res.status(401);
-            return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
+            String error = e.getMessage();
+            if (error.contains("Unauthorized")) {
+                res.status(401);
+                return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
+            } else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", "Error: Internal Server Error"));
+            }
         }
     }
 
@@ -162,9 +202,13 @@ public class Server {
             if (error.contains("already taken") || error.contains("Full")) {
                 res.status(403);
                 return new Gson().toJson(Map.of("message", "Error: already taken"));
-            } else {
+            }
+            if (error.contains("Unauthorized")) {
                 res.status(401);
                 return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
+            } else {
+                res.status(500);
+                return new Gson().toJson(Map.of("message", "Error: Internal Server Error"));
             }
         }
     }
