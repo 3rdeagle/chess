@@ -66,7 +66,6 @@ public class SQLUserDAO implements UserDao {
                     }
                 }
                 prepStatement.executeUpdate();
-
                 var rs = prepStatement.getGeneratedKeys();
                 if (rs.next()) {
                     rs.getInt(1);

@@ -81,9 +81,6 @@ public class SQLGameDAO implements GameDAO {
         executeUpdate(statement, update.whiteUsername(), update.blackUsername(), update.gameName(), gameJson, update.gameID());
     }
 
-
-
-
     private GameData readGame(ResultSet rs) throws SQLException {
         var gameID = rs.getInt("gameID");
         var whiteUsername = rs.getString("whiteUsername");
@@ -128,7 +125,7 @@ public class SQLGameDAO implements GameDAO {
             `gameID` int NOT NULL AUTO_INCREMENT,
             `whiteUsername` varchar(255) DEFAULT NULL,
             `blackUsername` varchar(255) DEFAULT NULL,
-            `gameName` varchar(255) DEFAULT NULL,
+            `gameName` varchar(255) NOT NULL,
             `game_json` TEXT NOT NULL,
              PRIMARY KEY (`gameID`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
