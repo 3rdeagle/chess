@@ -45,10 +45,6 @@ public class UserService {
             throw new DataAccessException("Wrong Password");
         }
 
-//        if (!Objects.equals(logUser.password(), request.password())) {
-//            throw new DataAccessException("Wrong Password");
-//        }
-
         String authToken = UUID.randomUUID().toString();
         authDao.createAuth(new AuthData(authToken, logUser.username()));
 

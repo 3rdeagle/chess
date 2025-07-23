@@ -15,7 +15,7 @@ import static java.sql.Types.NULL;
 public class SQLGameDAO implements GameDAO {
 
     public SQLGameDAO() throws DataAccessException {
-        configureDatabase();
+        ConfigureDatabase.configureDatabase(createStatements);
     }
 
     public void clearGames() throws DataAccessException {
@@ -26,7 +26,7 @@ public class SQLGameDAO implements GameDAO {
     public List<GameData> listGames() throws DataAccessException{
         List<GameData> result = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game_json FROM games";
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, gameJson FROM games";
             try (var prepStatement = conn.prepareStatement(statement)) {
                 try (var rs = prepStatement.executeQuery()) {
                     while (rs.next()) {
@@ -42,7 +42,7 @@ public class SQLGameDAO implements GameDAO {
 
     //CreateGame
     public GameData createGame(CreateGameRequest newGame) throws DataAccessException {
-        var statement = "INSERT INTO games ( whiteUsername, blackUsername, gameName, game_json) " +
+        var statement = "INSERT INTO games ( whiteUsername, blackUsername, gameName, gameJson) " +
                 "VALUES ( ?, ?, ?, ?)";
         var newGameJson = new Gson().toJson(new ChessGame());
         try {
@@ -58,7 +58,7 @@ public class SQLGameDAO implements GameDAO {
     public GameData getGame(int gameID) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, " +
-                    "game_json FROM games WHERE gameID=?";
+                    "gameJson FROM games WHERE gameID=?";
 
             try (var prepStatement = conn.prepareStatement(statement)) {
                 prepStatement.setInt(1, gameID);
@@ -76,7 +76,7 @@ public class SQLGameDAO implements GameDAO {
 
     //UpdateGame
     public void updateGame(GameData update) throws DataAccessException {
-        var statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, game_json=? WHERE gameID=?";
+        var statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, gameJson=? WHERE gameID=?";
         var gameJson = new Gson().toJson(update.game());
         executeUpdate(statement, update.whiteUsername(), update.blackUsername(), update.gameName(), gameJson, update.gameID());
     }
@@ -86,8 +86,8 @@ public class SQLGameDAO implements GameDAO {
         var whiteUsername = rs.getString("whiteUsername");
         var blackUsername = rs.getString("blackUsername");
         var gameName = rs.getString("gameName");
-        var game_json = rs.getString("game_json");
-        ChessGame gameObject = new Gson().fromJson(game_json, ChessGame.class);
+        var gameJson = rs.getString("gameJson");
+        ChessGame gameObject = new Gson().fromJson(gameJson, ChessGame.class);
         return new GameData(gameID, whiteUsername, blackUsername, gameName, gameObject);
     }
 
@@ -126,22 +126,9 @@ public class SQLGameDAO implements GameDAO {
             `whiteUsername` varchar(255) DEFAULT NULL,
             `blackUsername` varchar(255) DEFAULT NULL,
             `gameName` varchar(255) NOT NULL,
-            `game_json` TEXT NOT NULL,
+            `gameJson` TEXT NOT NULL,
              PRIMARY KEY (`gameID`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Couldn't configure table");
-        }
-    }
 }

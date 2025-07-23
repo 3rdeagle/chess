@@ -10,7 +10,7 @@ import static java.sql.Types.NULL;
 public class SQLUserDAO implements UserDao {
 
     public SQLUserDAO() throws DataAccessException {
-        configureDatabase();
+        ConfigureDatabase.configureDatabase(createStatements);
     }
 
     public void clearUsers() throws DataAccessException {
@@ -66,10 +66,6 @@ public class SQLUserDAO implements UserDao {
                     }
                 }
                 prepStatement.executeUpdate();
-                var rs = prepStatement.getGeneratedKeys();
-                if (rs.next()) {
-                    rs.getInt(1);
-                }
             }
         } catch (SQLException e) {
             throw new DataAccessException("Unable to update database", e);
@@ -88,17 +84,4 @@ public class SQLUserDAO implements UserDao {
             """
     };
 
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            System.out.println("Current catalog: " + conn.getCatalog());
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Couldn't configure table");
-        }
-    }
 }

@@ -11,7 +11,7 @@ import java.sql.*;
 public class SQLAuthDAO implements AuthDAO{
 
     public SQLAuthDAO() throws DataAccessException {
-        configureDatabase();
+        ConfigureDatabase.configureDatabase(createStatements);
     }
 
     public void clearAuth() throws DataAccessException {
@@ -70,14 +70,7 @@ public class SQLAuthDAO implements AuthDAO{
                         prepStatement.setNull(i + 1, NULL);
                     }
                 }
-
                 var rows = prepStatement.executeUpdate();
-
-
-                var rs = prepStatement.getGeneratedKeys();
-                if (rs.next()) {
-                    rs.getInt(1);
-                }
                 return rows;
             }
         } catch (SQLException e) {
@@ -97,16 +90,5 @@ public class SQLAuthDAO implements AuthDAO{
             """
     };
 
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Couldn't configure table");
-        }
-    }
+
 }
