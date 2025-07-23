@@ -56,15 +56,7 @@ public class SQLUserDAO implements UserDao {
     private void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var prepStatement = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String p) {
-                        prepStatement.setString(i + 1, p);
-                    }
-                    else if (param == null) {
-                        prepStatement.setNull(i + 1, NULL);
-                    }
-                }
+                UpdateManager.manageParams(prepStatement, params);
                 prepStatement.executeUpdate();
             }
         } catch (SQLException e) {

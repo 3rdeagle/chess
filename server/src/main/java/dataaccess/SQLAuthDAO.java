@@ -61,17 +61,8 @@ public class SQLAuthDAO implements AuthDAO{
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var prepStatement = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String p) {
-                        prepStatement.setString(i + 1, p);
-                    }
-                    else if (param == null) {
-                        prepStatement.setNull(i + 1, NULL);
-                    }
-                }
-                var rows = prepStatement.executeUpdate();
-                return rows;
+                UpdateManager.manageParams(prepStatement, params);
+                return prepStatement.executeUpdate();
             }
         } catch (SQLException e) {
             throw new DataAccessException("Unable to update database", e);
