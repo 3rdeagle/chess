@@ -4,6 +4,8 @@ import dataaccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
+import server.results.ListGamesResult;
+import service.requests.CreateGameRequest;
 import service.requests.LoginRequest;
 import service.requests.RegisterRequest;
 import service.results.RegisterResult;
@@ -76,14 +78,42 @@ public class ServerFacadeTests {
     @Test
     public void logoutUserPositive() throws DataAccessException {
         facade.registerUser(new RegisterRequest("Hannah", "password123", "hannah1@gmail.com"));
-        LoginRequest request = new LoginRequest("Hannah", "password1234");
         assertDoesNotThrow(() -> facade.logout());
 
     }
 
     @Test
-    public void logoutUserNegative() throws DataAccessException {
+    public void logoutUserNegative() {
         assertThrows(DataAccessException.class, () -> facade.logout()); // can't logout if never logged in
+    }
+
+    @ Test
+    public void createGamePositive() throws DataAccessException {
+        facade.registerUser(new RegisterRequest("Obi-Wan",
+                "HelloThere", "GeneralKenobi@gmail.com"));
+        CreateGameRequest request = new CreateGameRequest("CloneWar1");
+        assertDoesNotThrow(() -> facade.createGame(request));
+    }
+
+    @Test
+    public void createGameNegative() {
+        CreateGameRequest request = new CreateGameRequest("Badone");
+        assertThrows(DataAccessException.class, ()-> facade.createGame(request));
+    }
+
+    @Test
+    public void listGamesPositive() throws DataAccessException {
+        facade.registerUser(new RegisterRequest("Anakin", "Chosen1", "theChosen1@gmail.com"));
+        facade.createGame(new CreateGameRequest("game1"));
+        facade.createGame(new CreateGameRequest("game2"));
+        var result = facade.listGames();
+        assertNotNull(result);
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void listGamesNegative() throws DataAccessException {
+        assertThrows(DataAccessException.class, ()-> facade.listGames());
     }
 
 

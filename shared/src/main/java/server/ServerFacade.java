@@ -10,7 +10,6 @@ import service.requests.LoginRequest;
 import service.requests.RegisterRequest;
 import service.results.LoginResult;
 import service.results.RegisterResult;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -57,6 +56,7 @@ public class ServerFacade {
     public List<GameData> listGames() throws DataAccessException {
         var path = "/game";
         ListGamesResult result = this.makeRequest("GET", path, null, ListGamesResult.class);
+        assert result != null;
         return result.getGames();
     }
 
