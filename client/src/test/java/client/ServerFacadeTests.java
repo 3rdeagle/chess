@@ -4,7 +4,6 @@ import dataaccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
-import server.results.ListGamesResult;
 import service.requests.CreateGameRequest;
 import service.requests.LoginRequest;
 import service.requests.RegisterRequest;
@@ -115,6 +114,7 @@ public class ServerFacadeTests {
     public void listGamesNegative() throws DataAccessException {
         assertThrows(DataAccessException.class, ()-> facade.listGames());
     }
+
 
 
 
