@@ -3,14 +3,13 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import model.GameData;
-import server.results.CreateGameResult;
+import server.results.*;
 import service.requests.CreateGameRequest;
 import service.requests.JoinGameRequest;
 import service.requests.LoginRequest;
 import service.requests.RegisterRequest;
 import service.results.LoginResult;
 import service.results.RegisterResult;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,11 +17,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.Collection;
+import java.util.List;
 
 public class ServerFacade {
     private final String serverUrl;
     private String authtoken;
+    private final Gson gson = new Gson();
 
     public ServerFacade(String url) {
         serverUrl = url;
@@ -54,9 +54,10 @@ public class ServerFacade {
         this.authtoken = null; // delete the auth token off of the client
     }
 
-    public Collection<GameData> listGames() throws DataAccessException {
+    public List<GameData> listGames() throws DataAccessException {
         var path = "/game";
-        return this.makeRequest("GET", path, null, null);
+        ListGamesResult result = this.makeRequest("GET", path, null, ListGamesResult.class);
+        return result.getGames();
     }
 
     public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
@@ -67,12 +68,12 @@ public class ServerFacade {
 
     public void joinGame(JoinGameRequest request) throws DataAccessException {
         var path = "/game";
-        this.makeRequest("PUT", path, request, null);
+        this.makeRequest("PUT", path, request, Void.class);
     }
 
-    public void observeGame(int id) throws DataAccessException {
+    public void observeGame(int id) throws DataAccessException { // not sure how to do this?? some how just show a game
         var path = "/session";
-        this.makeRequest("POST", path, null, null);
+        this.makeRequest("POST", path, null, Void.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass)
@@ -88,17 +89,32 @@ public class ServerFacade {
 
             if (request != null) {
                 http.setDoOutput(true);
+                http.addRequestProperty("Content-Type", "application/json");
+                String reqData = gson.toJson(request);
+                try (OutputStream reqBody = http.getOutputStream()) {
+                    reqBody.write(reqData.getBytes());
+                }
             }
 
-            writeBody(request, http);
             http.connect();
-            throwIfNotSuccessful(http);
-            return readBody(http, responseClass);
+            int status = http.getResponseCode();
+            if (status < 200 || status >= 300) {
+                throw new DataAccessException("Error:" + status);
+            } else {
+                //it worked!
+                try (InputStream inputStream = http.getInputStream())   {
+                    InputStreamReader reader = new InputStreamReader(inputStream);
+                    if (responseClass != null) {
+                        return gson.fromJson(reader, responseClass);
+                    }
+                }
+            }
         } catch (DataAccessException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new DataAccessException(ex.getMessage());
         }
+        return null;
     }
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
