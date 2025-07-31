@@ -57,6 +57,7 @@ public class ChessClient {
             RegisterRequest request = new RegisterRequest(username,password,email);
             RegisterResult result = facade.registerUser(request);
             this.username = result.username();
+            state = State.Postlogin;
             return "Register user: " + username;
         } catch (DataAccessException e ) {
             return "Registration Failed";
@@ -76,6 +77,7 @@ public class ChessClient {
             LoginRequest request = new LoginRequest(username, password);
             LoginResult result = facade.login(request);
             this.username = result.username();
+            state = State.Postlogin;
             return "Login Successful";
         } catch (DataAccessException e) {
             return "Login Error";
@@ -86,6 +88,7 @@ public class ChessClient {
         try {
             facade.logout();
             this.username = null;
+            state = State.Prelogin;
             return "Logged out succesful";
         } catch (DataAccessException e) {
             return "Logout Error";
@@ -149,6 +152,7 @@ public class ChessClient {
         try {
             JoinGameRequest request = new JoinGameRequest(playerColor, gameID);
             facade.joinGame(request);
+            state = State.GamePlay;
             return "Joined game: " + gameID;
         } catch (DataAccessException e) {
             return "JoinGame Error";
@@ -170,5 +174,9 @@ public class ChessClient {
                 - observe
                 - quit
                 """;
+    }
+
+    public State getState() {
+        return state;
     }
 }
