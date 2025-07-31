@@ -87,18 +87,17 @@ public class ServerFacade {
             }
 
             if (request != null) {
-                http.http.setDoOutput(true);
+                http.setDoOutput(true);
             }
-            
 
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-        } catch (ResponseException ex) {
+        } catch (DataAccessException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new ResponseException(500, ex.getMessage());
+            throw new DataAccessException(ex.getMessage());
         }
     }
 
@@ -114,14 +113,13 @@ public class ServerFacade {
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, DataAccessException {
         var status = http.getResponseCode();
-        if (!isSuccessful(status)) {
+        if (status < 200 || status > 300) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
                     throw DataAccessException.fromJson(respErr);
                 }
             }
-
-            throw new DataAccessException(status, "other failure: " + status);
+            throw new DataAccessException("other failure: " + status);
         }
     }
 
@@ -138,9 +136,7 @@ public class ServerFacade {
         return response;
     }
 
-
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
-
 }
