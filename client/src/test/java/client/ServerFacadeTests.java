@@ -73,4 +73,21 @@ public class ServerFacadeTests {
         assertThrows(DataAccessException.class, () -> facade.login(request));
     }
 
+    @Test
+    public void logoutUserPositive() throws DataAccessException {
+        facade.registerUser(new RegisterRequest("Hannah", "password123", "hannah1@gmail.com"));
+        LoginRequest request = new LoginRequest("Hannah", "password1234");
+        assertDoesNotThrow(() -> facade.logout());
+
+    }
+
+    @Test
+    public void logoutUserNegative() throws DataAccessException {
+        assertThrows(DataAccessException.class, () -> facade.logout()); // can't logout if never logged in
+    }
+
+
+
+
+
 }
