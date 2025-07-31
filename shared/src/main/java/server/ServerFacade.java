@@ -101,7 +101,7 @@ public class ServerFacade {
             if (status < 200 || status >= 300) {
                 throw new DataAccessException("Error:" + status);
             } else {
-                //it worked!
+
                 try (InputStream inputStream = http.getInputStream())   {
                     InputStreamReader reader = new InputStreamReader(inputStream);
                     if (responseClass != null) {
@@ -117,42 +117,42 @@ public class ServerFacade {
         return null;
     }
 
-    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
-        if (request != null) {
-            http.addRequestProperty("Content-Type", "application/json");
-            String reqData = new Gson().toJson(request);
-            try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes());
-            }
-        }
-    }
-
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, DataAccessException {
-        var status = http.getResponseCode();
-        if (status < 200 || status > 300) {
-            try (InputStream respErr = http.getErrorStream()) {
-                if (respErr != null) {
-                    throw DataAccessException.fromJson(respErr);
-                }
-            }
-            throw new DataAccessException("other failure: " + status);
-        }
-    }
-
-    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
-        T response = null;
-        if (http.getContentLength() < 0) {
-            try (InputStream respBody = http.getInputStream()) {
-                InputStreamReader reader = new InputStreamReader(respBody);
-                if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
-                }
-            }
-        }
-        return response;
-    }
-
-    private boolean isSuccessful(int status) {
-        return status / 100 == 2;
-    }
+//    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+//        if (request != null) {
+//            http.addRequestProperty("Content-Type", "application/json");
+//            String reqData = new Gson().toJson(request);
+//            try (OutputStream reqBody = http.getOutputStream()) {
+//                reqBody.write(reqData.getBytes());
+//            }
+//        }
+//    }
+//
+//    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, DataAccessException {
+//        var status = http.getResponseCode();
+//        if (status < 200 || status > 300) {
+//            try (InputStream respErr = http.getErrorStream()) {
+//                if (respErr != null) {
+//                    throw DataAccessException.fromJson(respErr);
+//                }
+//            }
+//            throw new DataAccessException("other failure: " + status);
+//        }
+//    }
+//
+//    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
+//        T response = null;
+//        if (http.getContentLength() < 0) {
+//            try (InputStream respBody = http.getInputStream()) {
+//                InputStreamReader reader = new InputStreamReader(respBody);
+//                if (responseClass != null) {
+//                    response = new Gson().fromJson(reader, responseClass);
+//                }
+//            }
+//        }
+//        return response;
+//    }
+//
+//    private boolean isSuccessful(int status) {
+//        return status / 100 == 2;
+//    }
 }
