@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.GameData;
 import server.requests.CreateGameRequest;
+import shared.DataAccessException;
 
 import java.util.List;
 

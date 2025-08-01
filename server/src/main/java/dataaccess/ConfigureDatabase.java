@@ -1,5 +1,7 @@
 package dataaccess;
 
+import shared.DataAccessException;
+
 import java.sql.SQLException;
 
 public class ConfigureDatabase  {

@@ -1,4 +1,4 @@
-package dataaccess;
+package shared;
 
 import com.google.gson.Gson;
 

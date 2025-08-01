@@ -10,6 +10,7 @@ import server.requests.RegisterRequest;
 import server.results.results.LoginResult;
 import server.results.results.RegisterResult;
 import service.GameService;
+import shared.DataAccessException;
 import spark.*;
 import service.ClearService;
 import service.UserService;

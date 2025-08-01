@@ -7,6 +7,7 @@ import server.requests.LoginRequest;
 import server.requests.RegisterRequest;
 import server.results.results.LoginResult;
 import server.results.results.RegisterResult;
+import shared.DataAccessException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.requests.CreateGameRequest;
+import shared.DataAccessException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +14,7 @@ class SQLGameDAOTest {
     private static SQLGameDAO sqlGameDAO;
 
     @BeforeAll
-    static void setup() throws DataAccessException  {
+    static void setup() throws DataAccessException {
 
         sqlGameDAO = new SQLGameDAO();
     }

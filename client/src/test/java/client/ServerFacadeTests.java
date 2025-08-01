@@ -1,9 +1,9 @@
 package client;
 
-import dataaccess.DataAccessException;
+import shared.DataAccessException;
 import org.junit.jupiter.api.*;
 import server.Server;
-import server.ServerFacade;
+import shared.ServerFacade;
 import server.results.CreateGameResult;
 import server.requests.CreateGameRequest;
 import server.requests.JoinGameRequest;

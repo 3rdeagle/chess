@@ -8,6 +8,7 @@ import server.requests.CreateGameRequest;
 import server.requests.JoinGameRequest;
 import server.requests.RegisterRequest;
 import server.results.results.RegisterResult;
+import shared.DataAccessException;
 
 import java.util.Collection;
 

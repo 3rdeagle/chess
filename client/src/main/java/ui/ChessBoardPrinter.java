@@ -60,24 +60,7 @@ public class ChessBoardPrinter {
                 System.out.print("\u001B[47m\u001B[30m " + (8 - rank) + " \u001B[0m");
 
                 for (int file = 0; file < 8; file++) {
-                    boolean lightSquare = (rank + file) % 2 == 0;
-                    String bg = lightSquare ? "\u001B[107m" : "\u001B[40m";    // bright white or black bg
-                    char piece = board[rank][file];
-                    char displayChar;
-                    if (piece == '·') {
-                        displayChar = ' ';
-                    } else {
-                        displayChar = Character.toUpperCase(piece);
-                    }
-                    String fgColor;
-                    if (Character.isUpperCase(piece)) {
-                        fgColor = "\u001B[31m";             // red text
-                    } else if (Character.isLowerCase(piece)) {
-                        fgColor = "\u001B[34m";             // blue text
-                    } else {
-                        fgColor = "\u001B[37m";             // light gray for empty
-                    }
-                    System.out.print(bg + fgColor + " " + displayChar + " " + "\u001B[0m");
+                    printHelper(board, rank, file);
                 }
 
                 System.out.println("\u001B[47m\u001B[30m " + (8 - rank) + " \u001B[0m");
@@ -92,7 +75,28 @@ public class ChessBoardPrinter {
             System.out.println();
         }
 
-        public static void printBlackSideBoard(char[][] board) {
+    private static void printHelper(char[][] board, int rank, int file) {
+        boolean lightSquare = (rank + file) % 2 == 0;
+        String bg = lightSquare ? "\u001B[107m" : "\u001B[40m";    // bright white or black bg
+        char piece = board[rank][file];
+        char displayChar;
+        if (piece == '·') {
+            displayChar = ' ';
+        } else {
+            displayChar = Character.toUpperCase(piece);
+        }
+        String fgColor;
+        if (Character.isUpperCase(piece)) {
+            fgColor = "\u001B[31m";             // red text
+        } else if (Character.isLowerCase(piece)) {
+            fgColor = "\u001B[34m";             // blue text
+        } else {
+            fgColor = "\u001B[37m";             // light gray for empty
+        }
+        System.out.print(bg + fgColor + " " + displayChar + " " + "\u001B[0m");
+    }
+
+    public static void printBlackSideBoard(char[][] board) {
 
             System.out.print("\u001B[47m\u001B[30m   \u001B[0m");
 
@@ -111,26 +115,7 @@ public class ChessBoardPrinter {
 
                 for (int file = 7; file >= 0; file--) {
 
-                    boolean lightSquare = (rank + file) % 2 == 0;
-                    String bg = lightSquare ? "\u001B[107m" : "\u001B[40m";    // bright white or black bg
-                    char piece = board[rank][file];
-
-                    char displayChar;
-                    if (piece == '·') {
-                        displayChar = ' ';
-                    } else {
-                        displayChar = Character.toUpperCase(piece);
-                    }
-                    String fgColor;
-                    if (Character.isUpperCase(piece)) {
-                        fgColor = "\u001B[31m";             // red text
-                    } else if (Character.isLowerCase(piece)) {
-                        fgColor = "\u001B[34m";             // blue text
-                    } else {
-                        fgColor = "\u001B[37m";             // light gray for empty
-                    }
-
-                    System.out.print(bg + fgColor + " " + displayChar + " " + "\u001B[0m");
+                    printHelper(board, rank, file);
                 }
 
                 System.out.println("\u001B[47m\u001B[30m " + label + " \u001B[0m");

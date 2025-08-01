@@ -1,12 +1,8 @@
 package ui;
 
 import chess.ChessBoard;
-import dataaccess.DataAccessException;
-import model.GameData;
-
-import java.util.List;
+import shared.DataAccessException;
 import java.util.Scanner;
-import static ui.EscapeSequences.*;
 
 public class Repl {
     private final ChessClient client;
@@ -38,6 +34,7 @@ public class Repl {
     private void preLogin() {
         while (true) {
             System.out.println(client.help());
+            System.out.print(">>> ");
             String line = scanner.nextLine();
             if (line.equalsIgnoreCase("quit")) {
                 System.exit(0);
@@ -59,6 +56,7 @@ public class Repl {
     private void postLogin() {
         while (true) {
             System.out.println(client.help());
+            System.out.print(">>> ");
             String line = scanner.nextLine();
             if (line.equalsIgnoreCase("quit")) {
                 System.exit(0);
@@ -86,6 +84,7 @@ public class Repl {
 
         while (true) {
             String line = scanner.nextLine();
+            System.out.print(">>> ");
             if (line.equalsIgnoreCase("quit")) {
                 System.exit(0);
             }
@@ -97,8 +96,5 @@ public class Repl {
                 return;
             }
         }
-
-//        return;
-//    }
     }
 }

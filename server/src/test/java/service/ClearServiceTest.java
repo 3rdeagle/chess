@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import server.requests.CreateGameRequest;
 import server.requests.RegisterRequest;
 import server.results.results.RegisterResult;
+import shared.DataAccessException;
 
 import static org.junit.jupiter.api.Assertions.*;
 class ClearServiceTest {

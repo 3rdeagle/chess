@@ -1,9 +1,9 @@
 package ui;
 
 import chess.ChessBoard;
-import dataaccess.DataAccessException;
+import shared.DataAccessException;
 import model.GameData;
-import server.ServerFacade;
+import shared.ServerFacade;
 import server.requests.CreateGameRequest;
 import server.requests.JoinGameRequest;
 import server.requests.LoginRequest;
@@ -45,7 +45,7 @@ public class ChessClient {
                 case "forgetmestick" -> clearData();
                 case "observe" -> observeGame(params);
                 case "quit" -> "quit";
-                default -> help();
+                default -> "Please enter valid input";
 
             });
         } catch (DataAccessException e) {
@@ -124,7 +124,7 @@ public class ChessClient {
             }
             return stringBuilder.toString();
         } catch (DataAccessException e) {
-            return "List Game error ";
+            return "List Game error " + e;
         }
     }
 
@@ -200,7 +200,7 @@ public class ChessClient {
         GameData gameData = previousGames.get(index-1);
         this.board = gameData.game().getBoard();
         this.state = State.GamePlay;
-        ChessBoardPrinter.main();
+//        ChessBoardPrinter.main();
         return "Observing " + gameData.whiteUsername() + " vs " + gameData.blackUsername();
     }
 

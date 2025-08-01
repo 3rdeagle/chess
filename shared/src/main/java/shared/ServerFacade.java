@@ -1,7 +1,6 @@
-package server;
+package shared;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import model.GameData;
 import server.results.*;
 import server.requests.CreateGameRequest;

@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import shared.DataAccessException;
 
 public interface UserDao {
 

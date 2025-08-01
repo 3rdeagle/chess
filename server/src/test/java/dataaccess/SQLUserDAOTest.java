@@ -4,6 +4,7 @@ import model.UserData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import shared.DataAccessException;
 
 import static org.junit.jupiter.api.Assertions.*;
 class SQLUserDAOTest {
@@ -11,7 +12,7 @@ class SQLUserDAOTest {
     private static SQLUserDAO sqlUserDAO;
 
     @BeforeAll
-    static void setup() throws DataAccessException  {
+    static void setup() throws DataAccessException {
         new SQLAuthDAO().clearAuth();
         sqlUserDAO = new SQLUserDAO();
     }

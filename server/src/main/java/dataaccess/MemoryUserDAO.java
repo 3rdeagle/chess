@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import shared.DataAccessException;
 
 import java.util.concurrent.ConcurrentHashMap;
 
