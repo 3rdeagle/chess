@@ -33,49 +33,49 @@ public class ChessBoardPrinter {
     }
 
     public static void printWhiteSideBoard(char[][] board) {
-        System.out.print("\u001B[47m\u001B[30m   \u001B[0m");
+        System.out.print("\u001B[104m\u001B[30m   \u001B[0m");
         for (char fileChar = 'a'; fileChar <= 'h'; fileChar++) {
-            System.out.print("\u001B[47m\u001B[30m " + fileChar + " \u001B[0m");
+            System.out.print("\u001B[104m\u001B[30m " + fileChar + " \u001B[0m");
         }
 
-            System.out.print("\u001B[47m\u001B[30m   \u001B[0m");
+            System.out.print("\u001B[104m\u001B[30m   \u001B[0m");
             System.out.println();
 
             for (int rank = 0; rank < 8; rank++) {
-                System.out.print("\u001B[47m\u001B[30m " + (8 - rank) + " \u001B[0m");
+                System.out.print("\u001B[104m\u001B[30m " + (8 - rank) + " \u001B[0m");
 
                 for (int file = 0; file < 8; file++) {
                     printHelper(board, rank, file);
                 }
 
-                System.out.println("\u001B[47m\u001B[30m " + (8 - rank) + " \u001B[0m");
+                System.out.println("\u001B[104m\u001B[30m " + (8 - rank) + " \u001B[0m");
             }
 
-            System.out.print("\u001B[47m\u001B[30m   \u001B[0m");
+            System.out.print("\u001B[104m\u001B[30m   \u001B[0m");
             for (char fileChar = 'a'; fileChar <= 'h'; fileChar++) {
-                System.out.print("\u001B[47m\u001B[30m " + fileChar + " \u001B[0m");
+                System.out.print("\u001B[104m\u001B[30m " + fileChar + " \u001B[0m");
             }
 
-            System.out.print("\u001B[47m\u001B[30m   \u001B[0m");
+            System.out.print("\u001B[104m\u001B[30m   \u001B[0m");
             System.out.println();
         }
 
 
     public static void printBlackSideBoard(char[][] board) {
 
-            System.out.print("\u001B[47m\u001B[30m   \u001B[0m");
+            System.out.print("\u001B[102m\u001B[30m   \u001B[0m");
 
             for (char fileChar = 'h'; fileChar >= 'a'; fileChar--) {
-                System.out.print("\u001B[47m\u001B[30m " + fileChar + " \u001B[0m");
+                System.out.print("\u001B[102m\u001B[30m " + fileChar + " \u001B[0m");
             }
 
-            System.out.print("\u001B[47m\u001B[30m   \u001B[0m");
+            System.out.print("\u001B[102m\u001B[30m   \u001B[0m");
             System.out.println();
 
             for (int rank = 7; rank >= 0; rank--) {
                 int label = 1 + (7 - rank);
 
-                System.out.print("\u001B[47m\u001B[30m " + label + " \u001B[0m");
+                System.out.print("\u001B[102m\u001B[30m " + label + " \u001B[0m");
 
 
                 for (int file = 7; file >= 0; file--) {
@@ -83,14 +83,14 @@ public class ChessBoardPrinter {
                     printHelper(board, rank, file);
                 }
 
-                System.out.println("\u001B[47m\u001B[30m " + label + " \u001B[0m");
+                System.out.println("\u001B[102m\u001B[30m " + label + " \u001B[0m");
             }
 
-            System.out.print("\u001B[47m\u001B[30m   \u001B[0m");
+            System.out.print("\u001B[102m\u001B[30m   \u001B[0m");
             for (char fileChar = 'h'; fileChar >= 'a'; fileChar--) {
-                System.out.print("\u001B[47m\u001B[30m " + fileChar + " \u001B[0m");
+                System.out.print("\u001B[102m\u001B[30m " + fileChar + " \u001B[0m");
             }
-            System.out.print("\u001B[47m\u001B[30m   \u001B[0m");
+            System.out.print("\u001B[102m\u001B[30m   \u001B[0m");
             System.out.println();
         }
 

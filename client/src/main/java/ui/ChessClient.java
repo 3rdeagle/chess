@@ -150,7 +150,7 @@ public class ChessClient {
         }
         String gameName = "";
         if (params.length < 1) {
-            return "creategame <gameName>";
+            return "creategame requires argument";
         }
 
         gameName = params[0];
@@ -158,7 +158,7 @@ public class ChessClient {
         try {
             CreateGameRequest request = new CreateGameRequest(gameName);
             var result = facade.createGame(request);
-            return "Game Created: " + result.gameID();
+            return "Game Created: " + gameName;
         } catch (DataAccessException e) {
             return "Could not create game";
         }
@@ -170,34 +170,55 @@ public class ChessClient {
         }
         int gameID = 0;
         String gameName;
+        int index;
 
         if (params.length < 2) {
-            return "joingame <playercolor> <gamename>";
+            return "joingame requires 2 input arguments";
+        }
+
+        boolean isInteger;
+        try {
+            Integer.parseInt(params[1]);
+            isInteger = true;
+        } catch (NumberFormatException e) {
+            isInteger = false;
         }
 
         this.playerColor = params[0].toUpperCase();
-        gameName = params[1];
-
-        List<GameData> games = facade.listGames();
-
-        for (GameData game : games) {
-            if (game.gameName().equalsIgnoreCase(gameName)) {
-                gameID = game.gameID();
-                break;
-            }
-        }
-
         try {
-            JoinGameRequest request = new JoinGameRequest(playerColor, gameID);
-            facade.joinGame(request);
-            this.board = new ChessBoard();
-            this.board.resetBoard();
-            this.state = State.GamePlay;
-            return "Joined game: " + gameName + ": " + gameID ;
+            if (isInteger) {
+                index = Integer.parseInt(params[1]);
+                if (index < 1 || index > previousGames.size()) {
+                    return "Outside Game number range";
+                }
+                GameData gameData = previousGames.get(index - 1);
+                this.board = gameData.game().getBoard();
+                this.board.resetBoard();
+                this.state = State.GamePlay;
+                return "Joined game: " + index;
+
+            } else {
+                gameName = params[1];
+                List<GameData> games = facade.listGames();
+
+                for (GameData game : games) {
+                    if (game.gameName().equalsIgnoreCase(gameName)) {
+                        gameID = game.gameID();
+                        break;
+                    }
+                }
+                JoinGameRequest request = new JoinGameRequest(playerColor, gameID);
+                facade.joinGame(request);
+                this.board = new ChessBoard();
+                this.board.resetBoard();
+                this.state = State.GamePlay;
+                return "Joined game: " + gameName + ": " + gameID;
+            }
         } catch (DataAccessException e) {
             return "JoinGame Error: " + e.getMessage();
         }
     }
+
 
     public String clearData() throws DataAccessException {
         facade.clearDatabase();
@@ -226,7 +247,7 @@ public class ChessClient {
         GameData gameData = previousGames.get(index-1);
         this.board = gameData.game().getBoard();
         this.state = State.GamePlay;
-//        ChessBoardPrinter.main();
+        this.playerColor = "WHITE";
         return "Observing " + gameData.whiteUsername() + " vs " + gameData.blackUsername();
     }
 
