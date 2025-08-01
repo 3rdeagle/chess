@@ -1,7 +1,7 @@
 package dataaccess;
 
 import model.GameData;
-import service.requests.CreateGameRequest;
+import server.requests.CreateGameRequest;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package service.results;
+package server.results.results;
 
 public record LogoutResult() {
 }

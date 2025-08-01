@@ -3,11 +3,10 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.UserDao;
 import model.AuthData;
 import model.GameData;
-import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
+import server.requests.CreateGameRequest;
+import server.requests.JoinGameRequest;
 import java.util.Collection;
 
 public class GameService {

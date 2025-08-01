@@ -4,9 +4,9 @@ import dataaccess.*;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.requests.CreateGameRequest;
-import service.requests.RegisterRequest;
-import service.results.RegisterResult;
+import server.requests.CreateGameRequest;
+import server.requests.RegisterRequest;
+import server.results.results.RegisterResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 class ClearServiceTest {

@@ -6,10 +6,11 @@ import model.AuthData;
 import model.UserData;
 import dataaccess.UserDao;
 import org.mindrot.jbcrypt.BCrypt;
-import service.requests.*;
-import service.results.LoginResult;
-import service.results.RegisterResult;
-import java.util.Objects;
+import server.requests.LoginRequest;
+import server.requests.RegisterRequest;
+import server.results.results.LoginResult;
+import server.results.results.RegisterResult;
+
 import java.util.UUID;
 
 public class UserService {

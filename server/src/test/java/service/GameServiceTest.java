@@ -4,12 +4,11 @@ import dataaccess.*;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
-import service.requests.RegisterRequest;
-import service.results.RegisterResult;
+import server.requests.CreateGameRequest;
+import server.requests.JoinGameRequest;
+import server.requests.RegisterRequest;
+import server.results.results.RegisterResult;
 
-import javax.xml.crypto.Data;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;

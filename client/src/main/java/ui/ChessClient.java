@@ -4,12 +4,12 @@ import chess.ChessBoard;
 import dataaccess.DataAccessException;
 import model.GameData;
 import server.ServerFacade;
-import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
-import service.requests.LoginRequest;
-import service.requests.RegisterRequest;
-import service.results.LoginResult;
-import service.results.RegisterResult;
+import server.requests.CreateGameRequest;
+import server.requests.JoinGameRequest;
+import server.requests.LoginRequest;
+import server.requests.RegisterRequest;
+import server.results.results.LoginResult;
+import server.results.results.RegisterResult;
 
 import java.util.Arrays;
 import java.util.List;

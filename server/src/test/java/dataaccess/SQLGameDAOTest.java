@@ -4,7 +4,7 @@ import model.GameData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.requests.CreateGameRequest;
+import server.requests.CreateGameRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 

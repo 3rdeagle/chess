@@ -5,11 +5,11 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
 import server.results.CreateGameResult;
-import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
-import service.requests.LoginRequest;
-import service.requests.RegisterRequest;
-import service.results.RegisterResult;
+import server.requests.CreateGameRequest;
+import server.requests.JoinGameRequest;
+import server.requests.LoginRequest;
+import server.requests.RegisterRequest;
+import server.results.results.RegisterResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 
