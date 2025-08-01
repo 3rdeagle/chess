@@ -15,7 +15,7 @@ public class Repl {
 
 
     public void run() {
-        System.out.println("Welcome to Chess, \n sign in or register to start");
+        System.out.println("Welcome to Chess, \n Log in or Register to start");
         while (true) {
             switch (client.getState()) {
                 case Prelogin:
@@ -34,7 +34,7 @@ public class Repl {
     private void preLogin() {
         while (true) {
             System.out.println(client.help());
-            System.out.print(">>> ");
+            System.out.print("Status: Logged Out >>> ");
             String line = scanner.nextLine();
             if (line.equalsIgnoreCase("quit")) {
                 System.exit(0);
@@ -56,7 +56,7 @@ public class Repl {
     private void postLogin() {
         while (true) {
             System.out.println(client.help());
-            System.out.print(">>> ");
+            System.out.print("Status: Logged In >>> ");
             String line = scanner.nextLine();
             if (line.equalsIgnoreCase("quit")) {
                 System.exit(0);
@@ -82,8 +82,8 @@ public class Repl {
         ChessBoardPrinter.print(board, playerColor);
 
         while (true) {
+            System.out.print("Status: Game >>> ");
             String line = scanner.nextLine();
-            System.out.print(">>> ");
             if (line.equalsIgnoreCase("quit")) {
                 System.exit(0);
             }

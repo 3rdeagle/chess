@@ -44,6 +44,7 @@ public class ChessClient {
                 case "joingame" -> joinGame(params);
                 case "forgetmestick" -> clearData();
                 case "observe" -> observeGame(params);
+                case "help" -> helpMe();
                 case "quit" -> "quit";
                 default -> "Please enter valid input";
 
@@ -55,9 +56,12 @@ public class ChessClient {
 
     public String registerUser(String... params) throws DataAccessException {
         String username = "", password = "", email = "";
+        if (state != State.Prelogin) {
+            return "Already logged in";
+        }
 
         if (params.length < 3) {
-            return "register <username> <password> <email>";
+            return "register requires 3 input arguments";
         }
         username = params[0];
         password = params[1];
@@ -76,8 +80,13 @@ public class ChessClient {
 
     public String loginUser(String... params) throws DataAccessException {
         String username = "", password = "";
+
+        if (state != State.Prelogin) {
+            return "Already logged in";
+        }
+
         if (params.length < 2) {
-            return "login <username> <password>";
+            return "login requires 2 input arguments";
         }
         username = params[0];
         password = params[1];
@@ -89,11 +98,15 @@ public class ChessClient {
             state = State.Postlogin;
             return "Login Successful";
         } catch (DataAccessException e) {
-            return "Login Error";
+            return "Login Error" ;
         }
     }
 
     public String logoutUser() {
+        if (state != State.Postlogin) {
+            return "Not logged in";
+        }
+
         try {
             facade.logout();
             this.username = null;
@@ -105,6 +118,10 @@ public class ChessClient {
     }
 
     public String listGames() {
+        if (state == State.Prelogin) {
+            return "Unauthorized: Please log in";
+        }
+
         try {
             var games = facade.listGames();
             this.previousGames = games;
@@ -128,6 +145,9 @@ public class ChessClient {
     }
 
     public String createGame(String... params) {
+        if (state == State.Prelogin) {
+            return "Unauthorized: Please log in";
+        }
         String gameName = "";
         if (params.length < 1) {
             return "creategame <gameName>";
@@ -145,6 +165,9 @@ public class ChessClient {
     }
 
     public String joinGame(String... params ) throws DataAccessException {
+        if (state == State.Prelogin) {
+            return "Unauthorized: Please log in";
+        }
         int gameID = 0;
         String gameName;
 
@@ -184,6 +207,10 @@ public class ChessClient {
     }
 
     public String observeGame(String... params) {
+        if (state != State.Postlogin) {
+            return "Unauthorize: not logged in";
+        }
+
         if (params.length < 1) {
             return "Need observe <gamenumber>";
         }
@@ -203,9 +230,14 @@ public class ChessClient {
         return "Observing " + gameData.whiteUsername() + " vs " + gameData.blackUsername();
     }
 
+    public String helpMe() {
+        return "Please type out command exactly as below";
+    }
+
     public String help() {
         if (state == State.Prelogin) {
             return """
+                    - help
                     - register <username> <password> <email>
                     - login <username> <password>
                     - quit
@@ -216,6 +248,7 @@ public class ChessClient {
                 - creategame <gamename>
                 - joingame <playercolor> <gamename>
                 - observe <gamenumber>
+                - help
                 - logout
                 - quit
                 """;
