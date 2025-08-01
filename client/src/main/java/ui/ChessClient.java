@@ -74,7 +74,7 @@ public class ChessClient {
             state = State.Postlogin;
             return "Register user: " + username;
         } catch (DataAccessException e ) {
-            return "Registration Failed" + e.getMessage();
+            return "Registration Failed";
         }
     }
 
@@ -140,7 +140,7 @@ public class ChessClient {
             }
             return stringBuilder.toString();
         } catch (DataAccessException e) {
-            return "List Game error " + e;
+            return "List Game error ";
         }
     }
 
@@ -215,7 +215,7 @@ public class ChessClient {
                 return "Joined game: " + gameName + ": " + gameID;
             }
         } catch (DataAccessException e) {
-            return "JoinGame Error: " + e.getMessage();
+            return "JoinGame Error ";
         }
     }
 
