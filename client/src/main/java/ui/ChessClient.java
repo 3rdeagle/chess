@@ -184,15 +184,24 @@ public class ChessClient {
         return null;
     }
 
-    public ChessBoard observeGame(String... params) {
-        if (params.length > 2) {
-            return null;
+    public String observeGame(String... params) {
+        if (params.length < 1) {
+            return "Need observe <gamenumber>";
         }
-        int index = Integer.parseInt(params[0]);
-        ChessBoard boardObserve = previousGames.get(index-1).game().getBoard();
-        this.board = boardObserve;
+        int index;
+        try {
+            index = Integer.parseInt(params[0]);
+        } catch (NumberFormatException e) {
+            return "Give a valid number";
+        }
+        if (index < 1 || index > previousGames.size()) {
+            return "Outside Game number range";
+        }
+        GameData gameData = previousGames.get(index-1);
+        this.board = gameData.game().getBoard();
         this.state = State.GamePlay;
-        return boardObserve;
+        ChessBoardPrinter.main();
+        return "Observing " + gameData.whiteUsername() + " vs " + gameData.blackUsername();
     }
 
     public String help() {
