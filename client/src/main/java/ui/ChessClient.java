@@ -1,6 +1,8 @@
 package ui;
 
+import chess.ChessBoard;
 import dataaccess.DataAccessException;
+import model.GameData;
 import server.ServerFacade;
 import service.requests.CreateGameRequest;
 import service.requests.JoinGameRequest;
@@ -10,35 +12,42 @@ import service.results.LoginResult;
 import service.results.RegisterResult;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class ChessClient {
     private final ServerFacade facade;
     private final String serverUrl;
+    private ChessBoard board;
     enum State {Prelogin, Postlogin, GamePlay}
     private State state = State.Prelogin;
     private String username = null;
+    private String playerColor;
+    private List<GameData> previousGames = List.of();
 
     public ChessClient(String serverUrl) {
         facade = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
+
     }
 
     public String eval(String input) throws DataAccessException {
         try {
-            var tokens = input.toLowerCase().split(" ");
-            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+            var tokens = input.split(" ");
+            var cmd = tokens[0].toLowerCase();
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (cmd) {
+            return String.valueOf(switch (cmd) {
                 case "register" -> registerUser(params);
                 case "login" -> loginUser(params);
                 case "logout" -> logoutUser();
                 case "listgames" -> listGames();
                 case "creategame" -> createGame(params);
                 case "joingame" -> joinGame(params);
+                case "forgetmestick" -> clearData();
+                case "observe" -> observeGame(params);
                 case "quit" -> "quit";
                 default -> help();
 
-            };
+            });
         } catch (DataAccessException e) {
             return "Failed " + e;
         }
@@ -60,7 +69,7 @@ public class ChessClient {
             state = State.Postlogin;
             return "Register user: " + username;
         } catch (DataAccessException e ) {
-            return "Registration Failed";
+            return "Registration Failed" + e.getMessage();
         }
     }
 
@@ -98,6 +107,8 @@ public class ChessClient {
     public String listGames() {
         try {
             var games = facade.listGames();
+            this.previousGames = games;
+//            System.out.println(games);
             if (games == null || games.isEmpty()) {
                 return "No games";
             }
@@ -134,42 +145,68 @@ public class ChessClient {
         }
     }
 
-    public String joinGame(String... params ) {
-        String playerColor = "";
+    public String joinGame(String... params ) throws DataAccessException {
         int gameID = 0;
+        String gameName;
 
         if (params.length < 2) {
-            return "joingame <playercolor> <gameID>";
+            return "joingame <playercolor> <gamename>";
         }
 
-        playerColor = params[0];
-        try {
-            gameID = Integer.parseInt(params[1]);
-        } catch (NumberFormatException e) {
-            return "ID Must be Integer";
+        this.playerColor = params[0].toUpperCase();
+        gameName = params[1];
+
+        List<GameData> games = facade.listGames();
+
+        for (GameData game : games) {
+            if (game.gameName().equalsIgnoreCase(gameName)) {
+                gameID = game.gameID();
+                break;
+            }
         }
 
         try {
             JoinGameRequest request = new JoinGameRequest(playerColor, gameID);
             facade.joinGame(request);
-            state = State.GamePlay;
+            this.board = new ChessBoard();
+            this.board.resetBoard();
+            this.state = State.GamePlay;
             return "Joined game: " + gameID;
         } catch (DataAccessException e) {
-            return "JoinGame Error";
+            return "JoinGame Error: " + e.getMessage();
         }
+    }
+
+    public String clearData() throws DataAccessException {
+        facade.clearDatabase();
+        System.out.println("Database Wiped");
+        System.exit(0);
+        return null;
+    }
+
+    public ChessBoard observeGame(String... params) {
+        if (params.length > 2) {
+            return null;
+        }
+        int index = Integer.parseInt(params[0]);
+        ChessBoard boardObserve = previousGames.get(index-1).game().getBoard();
+        this.board = boardObserve;
+        this.state = State.GamePlay;
+        return boardObserve;
     }
 
     public String help() {
         if (state == State.Prelogin) {
             return """
                     - register <username> <password> <email>
+                    - login <username> <password>
                     - quit
                     """;
         }
         return """ 
                 - listgames
                 - creategame <gamename>
-                - joingame <playercolor> <gameID>
+                - joingame <playercolor> <gamename>
                 - logout
                 - observe
                 - quit
@@ -178,5 +215,21 @@ public class ChessClient {
 
     public State getState() {
         return state;
+    }
+
+    public ChessBoard getBoard(){
+        return board;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public String getPlayerColor() {
+        return playerColor;
+    }
+
+    public List<GameData> getPreviousGames() {
+        return previousGames;
     }
 }

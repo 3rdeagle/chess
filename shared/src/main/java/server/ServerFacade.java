@@ -68,10 +68,10 @@ public class ServerFacade {
 
     public void joinGame(JoinGameRequest request) throws DataAccessException {
         var path = "/game";
-        this.makeRequest("PUT", path, request, Void.class);
+        this.makeRequest("PUT", path, request, null);
     }
 
-    public void observeGame(int id) throws DataAccessException { // not sure how to do this?? some how just show a game
+    public void observeGame() throws DataAccessException { // not sure how to do this?? some how just show a game
         var path = "/session";
         this.makeRequest("POST", path, null, Void.class);
     }
@@ -117,42 +117,4 @@ public class ServerFacade {
         return null;
     }
 
-//    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
-//        if (request != null) {
-//            http.addRequestProperty("Content-Type", "application/json");
-//            String reqData = new Gson().toJson(request);
-//            try (OutputStream reqBody = http.getOutputStream()) {
-//                reqBody.write(reqData.getBytes());
-//            }
-//        }
-//    }
-//
-//    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, DataAccessException {
-//        var status = http.getResponseCode();
-//        if (status < 200 || status > 300) {
-//            try (InputStream respErr = http.getErrorStream()) {
-//                if (respErr != null) {
-//                    throw DataAccessException.fromJson(respErr);
-//                }
-//            }
-//            throw new DataAccessException("other failure: " + status);
-//        }
-//    }
-//
-//    private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
-//        T response = null;
-//        if (http.getContentLength() < 0) {
-//            try (InputStream respBody = http.getInputStream()) {
-//                InputStreamReader reader = new InputStreamReader(respBody);
-//                if (responseClass != null) {
-//                    response = new Gson().fromJson(reader, responseClass);
-//                }
-//            }
-//        }
-//        return response;
-//    }
-//
-//    private boolean isSuccessful(int status) {
-//        return status / 100 == 2;
-//    }
 }

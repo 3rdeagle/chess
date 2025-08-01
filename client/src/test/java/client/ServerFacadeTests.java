@@ -4,7 +4,9 @@ import dataaccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
+import server.results.CreateGameResult;
 import service.requests.CreateGameRequest;
+import service.requests.JoinGameRequest;
 import service.requests.LoginRequest;
 import service.requests.RegisterRequest;
 import service.results.RegisterResult;
@@ -33,12 +35,6 @@ public class ServerFacadeTests {
     @AfterAll
     static void stopServer() {
         server.stop();
-    }
-
-
-    @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
     }
 
     @Test
@@ -113,6 +109,30 @@ public class ServerFacadeTests {
     @Test
     public void listGamesNegative() throws DataAccessException {
         assertThrows(DataAccessException.class, ()-> facade.listGames());
+    }
+
+    @Test
+    public void joinGamePositive() throws DataAccessException {
+        facade.registerUser(new RegisterRequest("Billy", "password", "Testgmail"));
+        CreateGameResult game = facade.createGame(new CreateGameRequest("game1"));
+        JoinGameRequest request = new JoinGameRequest("WHITE", game.gameID());
+        assertDoesNotThrow(()-> facade.joinGame(request));
+    }
+
+    @Test
+    public void joinGameNegative() throws DataAccessException {
+        JoinGameRequest request = new JoinGameRequest("WHITE", 123);
+        assertThrows(DataAccessException.class, ()-> facade.joinGame(request)  );
+    }
+
+    @Test
+    public void clearDatabasePositive() throws DataAccessException {
+        facade.registerUser(new RegisterRequest("bobo", "bobopass", "boboemail"));
+        facade.createGame(new CreateGameRequest("TestGame"));
+        facade.clearDatabase();
+        assertThrows(DataAccessException.class, ()->
+                facade.login(new LoginRequest("bobo", "bobopass")));
+
     }
 
 

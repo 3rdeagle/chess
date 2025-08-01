@@ -1,7 +1,10 @@
 package ui;
 
+import chess.ChessBoard;
 import dataaccess.DataAccessException;
+import model.GameData;
 
+import java.util.List;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
@@ -13,7 +16,9 @@ public class Repl {
         this.client = new ChessClient(serverURL);
     }
 
-    public void Run() {
+
+
+    public void run() {
         System.out.println("Welcome to Chess, \n sign in or register to start");
         while (true) {
             switch (client.getState()) {
@@ -25,8 +30,6 @@ public class Repl {
                     break;
                 case GamePlay:
                     gamePlay();
-
-
             }
         }
     }
@@ -36,8 +39,8 @@ public class Repl {
         while (true) {
             System.out.println(client.help());
             String line = scanner.nextLine();
-            if (line.toLowerCase().contains("quit") ) {
-                break;
+            if (line.equalsIgnoreCase("quit")) {
+                System.exit(0);
             }
 
             try {
@@ -57,7 +60,7 @@ public class Repl {
         while (true) {
             System.out.println(client.help());
             String line = scanner.nextLine();
-            if (line.equalsIgnoreCase("quit") ) {
+            if (line.equalsIgnoreCase("quit")) {
                 System.exit(0);
             }
 
@@ -73,5 +76,29 @@ public class Repl {
             }
 
         }
+    }
+
+    private void gamePlay() {
+        ChessBoard board = client.getBoard();
+        String playerColor = client.getPlayerColor();
+//        ChessBoardPrinter.print(board, playerColor);
+        ChessBoardPrinter.main();
+
+        while (true) {
+            String line = scanner.nextLine();
+            if (line.equalsIgnoreCase("quit")) {
+                System.exit(0);
+            }
+            if (client.getState() != ChessClient.State.GamePlay) {
+                return;
+            }
+            if (line.equalsIgnoreCase("exit")) {
+                client.setState(ChessClient.State.Postlogin);
+                return;
+            }
+        }
+
+//        return;
+//    }
     }
 }
