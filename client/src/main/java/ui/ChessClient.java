@@ -217,7 +217,7 @@ public class ChessClient {
                 - creategame <gamename>
                 - joingame <playercolor> <gamename>
                 - logout
-                - observe
+                - observe <gamenumber>
                 - quit
                 """;
     }
