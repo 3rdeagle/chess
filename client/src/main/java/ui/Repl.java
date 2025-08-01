@@ -79,8 +79,7 @@ public class Repl {
     private void gamePlay() {
         ChessBoard board = client.getBoard();
         String playerColor = client.getPlayerColor();
-//        ChessBoardPrinter.print(board, playerColor);
-        ChessBoardPrinter.main();
+        ChessBoardPrinter.print(board, playerColor);
 
         while (true) {
             String line = scanner.nextLine();

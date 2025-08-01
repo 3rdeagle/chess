@@ -62,6 +62,7 @@ public class ChessClient {
         username = params[0];
         password = params[1];
         email = params[2];
+
         try {
             RegisterRequest request = new RegisterRequest(username,password,email);
             RegisterResult result = facade.registerUser(request);
@@ -78,7 +79,6 @@ public class ChessClient {
         if (params.length < 2) {
             return "login <username> <password>";
         }
-
         username = params[0];
         password = params[1];
 
@@ -108,7 +108,6 @@ public class ChessClient {
         try {
             var games = facade.listGames();
             this.previousGames = games;
-//            System.out.println(games);
             if (games == null || games.isEmpty()) {
                 return "No games";
             }
@@ -171,7 +170,7 @@ public class ChessClient {
             this.board = new ChessBoard();
             this.board.resetBoard();
             this.state = State.GamePlay;
-            return "Joined game: " + gameID;
+            return "Joined game: " + gameName + ": " + gameID ;
         } catch (DataAccessException e) {
             return "JoinGame Error: " + e.getMessage();
         }
@@ -216,8 +215,8 @@ public class ChessClient {
                 - listgames
                 - creategame <gamename>
                 - joingame <playercolor> <gamename>
-                - logout
                 - observe <gamenumber>
+                - logout
                 - quit
                 """;
     }

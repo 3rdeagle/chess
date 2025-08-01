@@ -59,6 +59,31 @@ public class ChessPiece {
         return pieceMoves;
     }
 
+    public Character getPieceCharacter () {
+        if (type == null || pieceColor == null) {
+            return ' ';
+        }
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
+            return switch (type) {
+                case KING -> ('K');
+                case QUEEN -> ('Q');
+                case BISHOP -> ('B');
+                case KNIGHT -> ('N');
+                case ROOK -> ('R');
+                case PAWN -> ('P');
+            };
+        } else {
+            return switch (type) {
+                case KING -> ('k');
+                case QUEEN -> ('q');
+                case BISHOP -> ('b');
+                case KNIGHT -> ('n');
+                case ROOK -> ('r');
+                case PAWN -> ('p');
+            };
+        }
+    }
+
     @Override
     public String toString() {
         return "ChessPiece{" +
