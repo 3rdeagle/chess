@@ -24,7 +24,7 @@ public class UserGameCommand {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
-        this.move = move;
+        this.move = null;
     }
 
     public enum CommandType {
@@ -46,9 +46,6 @@ public class UserGameCommand {
         return gameID;
     }
 
-    public ChessMove getMove() {
-        return move;
-    }
 
     @Override
     public boolean equals(Object o) {

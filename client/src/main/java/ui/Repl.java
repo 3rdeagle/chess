@@ -16,8 +16,6 @@ public class Repl implements NotificationHandler {
         this.client = new ChessClient(serverURL);
     }
 
-
-
     public void run() {
         System.out.println("Welcome to Chess, \n Log in or Register to start");
         while (true) {
@@ -33,7 +31,6 @@ public class Repl implements NotificationHandler {
             }
         }
     }
-
 
     private void preLogin() {
         while (true) {

@@ -13,6 +13,7 @@ public class ServerMessage {
     private int gameID;
     private String errorMessage;
     private String notification;
+    private String gameString;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -41,6 +42,10 @@ public class ServerMessage {
 
     public String getNotification() {
         return notification;
+    }
+
+    public String getGameString() {
+        return gameString;
     }
 
     @Override
