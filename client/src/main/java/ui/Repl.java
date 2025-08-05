@@ -2,9 +2,13 @@ package ui;
 
 import chess.ChessBoard;
 import shared.DataAccessException;
+import websocket.NotificationHandler;
+import websocket.messages.Notification;
+
+
 import java.util.Scanner;
 
-public class Repl {
+public class Repl implements NotificationHandler {
     private final ChessClient client;
     Scanner scanner = new Scanner(System.in);
 
@@ -95,5 +99,15 @@ public class Repl {
                 return;
             }
         }
+    }
+
+    @Override
+    public void notify(Notification notification) {
+        System.out.println( notification.message());
+        printPrompt();
+    }
+
+    private void printPrompt() {
+        System.out.print("\n" + ">>> " );
     }
 }
