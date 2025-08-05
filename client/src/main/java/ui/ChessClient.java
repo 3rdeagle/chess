@@ -1,11 +1,11 @@
 package ui;
 
 import chess.ChessBoard;
+import server.requests.JoinGameRequest;
 import shared.DataAccessException;
 import model.GameData;
 import shared.ServerFacade;
 import server.requests.CreateGameRequest;
-import server.requests.JoinGameRequest;
 import server.requests.LoginRequest;
 import server.requests.RegisterRequest;
 import server.results.results.LoginResult;
@@ -168,55 +168,49 @@ public class ChessClient {
         if (state == State.Prelogin) {
             return "Unauthorized: Please log in";
         }
-        int gameID = 0;
-        String gameName;
+
         int index;
 
         if (params.length < 2) {
             return "joingame requires 2 input arguments";
         }
 
-        boolean isInteger;
-        try {
-            Integer.parseInt(params[1]);
-            isInteger = true;
-        } catch (NumberFormatException e) {
-            isInteger = false;
+        String color = params[0].toUpperCase();
+        if (!color.equals("WHITE") && !color.equals("BLACK")) {
+            return "Invalid color";
         }
 
-        this.playerColor = params[0].toUpperCase();
         try {
-            if (isInteger) {
-                index = Integer.parseInt(params[1]);
-                if (index < 1 || index > previousGames.size()) {
-                    return "Outside Game number range";
-                }
-                GameData gameData = previousGames.get(index - 1);
-                this.board = gameData.game().getBoard();
-                this.board.resetBoard();
-                this.state = State.GamePlay;
-                return "Joined game: " + index;
-
-            } else {
-                gameName = params[1];
-                List<GameData> games = facade.listGames();
-
-                for (GameData game : games) {
-                    if (game.gameName().equalsIgnoreCase(gameName)) {
-                        gameID = game.gameID();
-                        break;
-                    }
-                }
-                JoinGameRequest request = new JoinGameRequest(playerColor, gameID);
-                facade.joinGame(request);
-                this.board = new ChessBoard();
-                this.board.resetBoard();
-                this.state = State.GamePlay;
-                return "Joined game: " + gameName + ": " + gameID;
+            index = Integer.parseInt(params[1]);
+            if (index < 1 || index > previousGames.size()) {
+                return "Outside Game number range";
             }
-        } catch (DataAccessException e) {
-            return "JoinGame Error ";
+        } catch (NumberFormatException e) {
+            return "Give a valid number";
         }
+
+        GameData gameData = previousGames.get(index - 1);
+        try {
+            JoinGameRequest joinGameRequest = new JoinGameRequest(color, gameData.gameID());
+            facade.joinGame(joinGameRequest);
+        } catch (DataAccessException e) {
+            return "Join game error";
+        }
+
+        if (color.equals("WHITE") && gameData.whiteUsername() != null) {
+            return "White taken";
+        }
+
+        if (color.equals("BLACK") && gameData.blackUsername() != null) {
+            return "Black taken";
+        }
+
+        this.playerColor = color;
+        this.board = gameData.game().getBoard();
+        this.board.resetBoard();
+        this.state = State.GamePlay;
+        return "Joined game: " + index;
+
     }
 
 
@@ -230,6 +224,11 @@ public class ChessClient {
     public String observeGame(String... params) {
         if (state != State.Postlogin) {
             return "Unauthorize: not logged in";
+        }
+        try {
+            this.previousGames = facade.listGames();
+        } catch (DataAccessException e) {
+            return "Failed update games";
         }
 
         if (params.length < 1) {
@@ -267,7 +266,7 @@ public class ChessClient {
         return """ 
                 - listgames
                 - creategame <gamename>
-                - joingame <playercolor> <gamename>
+                - joingame <playercolor> <gamenumber>
                 - observe <gamenumber>
                 - help
                 - logout
