@@ -1,43 +1,50 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
-
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import websocket.messages.Notification;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<Integer, Connection> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, Set<Session>> connections = new ConcurrentHashMap<>();
 
     public void add(int gameID, Session session) {
-        var connection = new Connection(gameID, session);
-        connections.put(gameID, connection);
+        var sessionSet = connections.get(gameID);
+        if (sessionSet == null) {
+            sessionSet = ConcurrentHashMap.newKeySet();
+            connections.put(gameID, sessionSet);
+        }
+        sessionSet.add(session);
     }
 
-    public void remove(int gameID) {
-        connections.remove(gameID);
-    }
-
-    public void broadcast(String excludeUsername, Notification notification) throws IOException {
-        var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.getUsername().equals(excludeUsername)) {
-                    c.send(notification.toString());
-                }
-            } else {
-                removeList.add(c);
+    public void remove(int gameID, Session session) {
+        Set<Session> sessionSet = connections.get(gameID);
+        if (sessionSet != null) {
+            sessionSet.remove(session);  // remove specifcally the session of that player
+            if (sessionSet.isEmpty()) {
+                connections.remove(gameID); // if no one if in there remove the game from connections
             }
         }
+    }
 
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.getGameID());
+    public void broadcast(int gameId, String message) throws IOException {
+        Set<Session> sessions = connections.get(gameId);
+        if (sessions == null) {
+            return;
+        }
+        for (Session session : sessions) {
+            if (session.isOpen()) {
+                session.getRemote().sendString(message);
+            }
         }
     }
 
-    public void clearGame(int gameID) {
+    public void clearGame(int gameID) { // should I put a message saying something
         connections.remove(gameID);
+    }
+
+    public boolean hasGame(int gameID) {
+        Set<Session> sessionSet = connections.get(gameID);
+        return sessionSet != null && !sessionSet.isEmpty();
     }
 }

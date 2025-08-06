@@ -11,6 +11,7 @@ import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
 import shared.DataAccessException;
 import websocket.commands.ConnectCommand;
@@ -21,6 +22,7 @@ import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
 import java.io.IOException;
 
+@WebSocket
 public class WebSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
@@ -61,7 +63,9 @@ public class WebSocketHandler {
             ServerMessage resignMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     command.gameID, null, resignNotification);
 
-            connections.broadcast(user.username(), new Notification(resignMessage.toString()));
+            String output = new Gson().toJson(resignMessage, ServerMessage.class);
+
+            connections.broadcast(gameData.gameID(), output);
 
             connections.clearGame(command.gameID);
 
