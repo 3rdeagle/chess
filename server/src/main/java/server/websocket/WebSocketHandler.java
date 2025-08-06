@@ -42,34 +42,81 @@ public class WebSocketHandler {
         var action = jsonObject.get("commandType").getAsString();
         switch (action) {
             case "CONNECT" -> connect(session, message);
-            case "MAKE_MOVE" -> MakeMove(session, message);
-            case "LEAVE" -> handleLeave(session, message);
-            case "RESIGN" -> handleResign(session, message);
+            case "MAKE_MOVE" -> makeMove(session, message);
+            case "LEAVE" -> leave(session, message);
+            case "RESIGN" -> resign(session, message);
         }
     }
 
-    private void handleResign(Session session, String message) {
+    private void resign(Session session, String message) {
         var command = new Gson().fromJson(message, ResignCommand.class);
+
     }
 
-    private void handleLeave(Session session, String message) {
-        var command = new Gson().fromJson(message, LeaveCommand.class);
+    private void leave(Session session, String message) throws IOException {
+        LeaveCommand command = null;
+        try {
+            command = new Gson().fromJson(message, LeaveCommand.class);
+
+            checkCommand(command.authToken, command.gameID);
+            AuthData user = authDAO.getAuth(command.authToken);
+            GameData gameData = gameDAO.getGame(command.gameID);
+
+            String whiteUser = gameData.whiteUsername();
+            String blackUser = gameData.blackUsername();
+
+            if (user.username().equals(whiteUser)) {
+                whiteUser = null;
+            }
+            if (user.username().equals(blackUser)) {
+                blackUser = null; // making it so when we update the user is cleared out
+            }
+
+            GameData update = new GameData(gameData.gameID(), whiteUser, blackUser,
+                    gameData.gameName(), gameData.game()); /* keep everything the same just replace either
+                                                                the black or white user */
+            gameDAO.updateGame(update);  // send the updated game to the server
+
+            connections.remove(command.gameID);
+
+            String leaveNotification = user.username() + " left game";  // message we want displayed
+            ServerMessage leaveMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    command.gameID, null, leaveNotification);  // creating the ServerMessage
+
+            String leaveOutput = new Gson().toJson(leaveMessage);
+            connections.broadcast(user.username(), new Notification(leaveOutput)); // broad cast that the user left
+
+        } catch (DataAccessException | IOException e) {
+            int gameID = (command != null ? command.gameID : 0);
+            ServerMessage moveError = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                    gameID, "Error making move", null);
+            try {
+                session.getRemote().sendString(new Gson().toJson(moveError));
+            } catch (IOException _) {
+            }
+        }
+
     }
 
-    private void MakeMove(Session session, String message) {
+    private void checkCommand(String command, Integer command1) throws DataAccessException {
+        AuthData user = authDAO.getAuth(command);
+        if (user == null) {
+            throw new DataAccessException("Unauthorized");
+        }
+        GameData gameData = gameDAO.getGame(command1); // get the game data to manage it
+        if (gameData == null) {
+            throw new DataAccessException("No Game");
+        }
+    }
+
+    private void makeMove(Session session, String message) {
         MakeMoveCommand command = null;
 
         try {
             command = new Gson().fromJson(message, MakeMoveCommand.class);
+            checkCommand(command.authToken, command.gameID);
+            GameData gameData = gameDAO.getGame(command.gameID);
             AuthData user = authDAO.getAuth(command.authToken);
-            if (user == null) {
-                throw new DataAccessException("Unauthorized");
-            }
-
-            GameData gameData = gameDAO.getGame(command.gameID); // get the game data to manage it
-            if (gameData == null) {
-                throw new DataAccessException("No Game");
-            }
 
             ChessGame game = new Gson().fromJson(gameData.game().toString(), ChessGame.class);
             game.makeMove(command.move);
@@ -93,7 +140,14 @@ public class WebSocketHandler {
             connections.broadcast(user.username(), new Notification(notifyMessage.toString()));
 
         } catch (DataAccessException | InvalidMoveException | IOException e) {
-            throw new RuntimeException(e);
+            int gameID = (command != null ? command.gameID : 0);
+            ServerMessage moveError = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                    gameID, "Error making move", null);
+            try {
+                session.getRemote().sendString(new Gson().toJson(moveError));
+            } catch (IOException _) {
+
+            }
         }
 
 
