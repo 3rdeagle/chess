@@ -49,7 +49,31 @@ public class WebSocketHandler {
     }
 
     private void resign(Session session, String message) {
-        var command = new Gson().fromJson(message, ResignCommand.class);
+        ResignCommand command = null;
+        try {
+            command = new Gson().fromJson(message, ResignCommand.class);
+            checkCommand(command.authToken, command.gameID);
+
+            GameData gameData = gameDAO.getGame(command.gameID);
+            AuthData user = authDAO.getAuth(command.authToken);
+
+            String resignNotification = user.username() + " has resigned";
+            ServerMessage resignMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    command.gameID, null, resignNotification);
+
+            connections.broadcast(user.username(), new Notification(resignMessage.toString()));
+
+            connections.clearGame(command.gameID);
+
+        } catch (DataAccessException | IOException e) {
+            int gameID = (command != null ? command.gameID : 0);
+            ServerMessage moveError = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                    gameID, "Error making move", null);
+            try {
+                session.getRemote().sendString(new Gson().toJson(moveError));
+            } catch (IOException _) {
+            }
+        }
 
     }
 

@@ -36,4 +36,8 @@ public class ConnectionManager {
             connections.remove(c.getGameID());
         }
     }
+
+    public void clearGame(int gameID) {
+        connections.remove(gameID);
+    }
 }
