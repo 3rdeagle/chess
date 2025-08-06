@@ -48,6 +48,10 @@ public class ServerMessage {
         return gameString;
     }
 
+    public void setGameString(String gameString) {
+        this.gameString = gameString;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

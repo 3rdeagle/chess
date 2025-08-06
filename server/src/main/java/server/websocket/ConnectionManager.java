@@ -8,15 +8,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import websocket.messages.Notification;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, Connection> connections = new ConcurrentHashMap<>();
 
-    public void add(String username, Session session) {
-        var connection = new Connection(username, session);
-        connections.put(username, connection);
+    public void add(int gameID, Session session) {
+        var connection = new Connection(gameID, session);
+        connections.put(gameID, connection);
     }
 
-    public void remove(String username) {
-        connections.remove(username);
+    public void remove(int gameID) {
+        connections.remove(gameID);
     }
 
     public void broadcast(String excludeUsername, Notification notification) throws IOException {
@@ -33,7 +33,7 @@ public class ConnectionManager {
 
         // Clean up any connections that were left open.
         for (var c : removeList) {
-            connections.remove(c.username);
+            connections.remove(c.getGameID());
         }
     }
 }

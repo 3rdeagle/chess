@@ -10,8 +10,8 @@ public class Connection {
     private int gameID;
     private boolean observer;
 
-    public Connection(String username, Session session) {
-        this.username = username;
+    public Connection(int gameID, Session session) {
+        this.gameID = gameID;
         this.session = session;
     }
 
