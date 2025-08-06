@@ -166,7 +166,7 @@ public class WebSocketHandler {
                 return;
             }
 
-            ChessGame game = new Gson().fromJson(gameData.game().toString(), ChessGame.class);
+            ChessGame game = gameData.game().clone(); // clone the board and data
             game.makeMove(command.move);  // make the move happen on the board
 
             GameData update = new GameData(gameData.gameID(), gameData.whiteUsername(),
@@ -187,7 +187,7 @@ public class WebSocketHandler {
             // create the Json string that can then be sent to broadcast
             String moveOutputMessage = new Gson().toJson(notifyMoveMessage, ServerMessage.class);
 
-            connections.broadcast(command.gameID, moveOutputMessage);
+            connections.broadcastExcept(command.gameID, moveOutputMessage,session);
 
         } catch (DataAccessException | InvalidMoveException | IOException e) {
             int gameID = (command != null ? command.gameID : 0);
