@@ -209,20 +209,29 @@ public class WebSocketHandler {
                 throw new DataAccessException("Unauthorized");
             }
 
-            connections.add(command.gameID, session);
+            connections.add(command.gameID, session); // registers session
             GameData gameData = gameDAO.getGame(command.gameID);
+            ChessGame game = gameData.game();
 
-            ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, command.gameID,
+            ServerMessage serverConnectMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, command.gameID,
                     null, null);
 
-            serverMessage.setGame(new ChessGame());
-
-            String output = new Gson().toJson(serverMessage);
+            serverConnectMessage.setGame(game);
+            String output = new Gson().toJson(serverConnectMessage);
             session.getRemote().sendString(output);
+
+            String connectNotification = "New user " + user.username() + " has joined the game";
+            ServerMessage connectOutputMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    command.gameID, null, connectNotification);
+
+            String connectJson = new Gson().toJson(connectOutputMessage, ServerMessage.class);
+
+            connections.broadcastExcept(command.gameID, connectJson, session);
+
         } catch (DataAccessException e) {
             int gameID = (command != null ? command.gameID : 0);
             ServerMessage connectionError = new ServerMessage(ServerMessage.ServerMessageType.ERROR, gameID,
-                    "Error Connecting", null );
+                    "Error Connecting", null);
             session.getRemote().sendString(new Gson().toJson(connectionError));
         }
     }

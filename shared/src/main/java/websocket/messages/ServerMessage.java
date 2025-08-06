@@ -16,6 +16,7 @@ public class ServerMessage {
     private String errorMessage;
     private String notification;
     private ChessGame game;
+    private String message;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -23,11 +24,11 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type, int gameID, String errorMessage, String notification) {
+    public ServerMessage(ServerMessageType type, int gameID, String errorMessage, String message) {
         this.serverMessageType = type;
         this.gameID = gameID;
         this.errorMessage = errorMessage;
-        this.notification = notification;
+        this.message = message;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -42,8 +43,8 @@ public class ServerMessage {
         return errorMessage;
     }
 
-    public String getNotification() {
-        return notification;
+    public String getMessage() {
+        return message;
     }
 
     public ChessGame getGame() {
