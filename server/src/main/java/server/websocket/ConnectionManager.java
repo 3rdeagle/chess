@@ -39,6 +39,18 @@ public class ConnectionManager {
         }
     }
 
+    public void broadcastExcept(int gameID, String message, Session excluded) throws IOException {
+        Set<Session> sessionSet = connections.get(gameID);
+        if (sessionSet == null) {
+            return;
+        }
+        for (Session ses : sessionSet) {
+            if (ses != excluded && ses.isOpen()) {
+                ses.getRemote().sendString(message);
+            }
+        }
+    }
+
     public void clearGame(int gameID) { // should I put a message saying something
         connections.remove(gameID);
     }

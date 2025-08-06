@@ -133,7 +133,6 @@ public class WebSocketHandler {
             } catch (IOException _) {
             }
         }
-
     }
 
     private void checkCommand(String command, Integer command1) throws DataAccessException {
@@ -166,7 +165,6 @@ public class WebSocketHandler {
             ChessGame game = new Gson().fromJson(gameData.game().toString(), ChessGame.class);
             game.makeMove(command.move);  // make the move happen on the board
 
-            var updatedGameJson = new Gson().toJson(game);
             GameData update = new GameData(gameData.gameID(), gameData.whiteUsername(),
                     gameData.blackUsername(), gameData.gameName(), game); // create the update
 
@@ -175,7 +173,7 @@ public class WebSocketHandler {
             ServerMessage moveMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
                     command.gameID, null, null);
 
-            moveMessage.setGameString(updatedGameJson);
+            moveMessage.setGame(game);
             String moveJson = new Gson().toJson(moveMessage);
             connections.broadcast(command.gameID, moveJson);
 
@@ -217,8 +215,7 @@ public class WebSocketHandler {
             ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, command.gameID,
                     null, null);
 
-            String board = new Gson().toJson(gameData.game());
-            serverMessage.setGameString(board);
+            serverMessage.setGame(new ChessGame());
 
             String output = new Gson().toJson(serverMessage);
             session.getRemote().sendString(output);

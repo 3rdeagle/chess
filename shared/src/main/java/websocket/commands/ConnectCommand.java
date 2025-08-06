@@ -2,7 +2,7 @@ package websocket.commands;
 
 public class ConnectCommand {
 
-    public String type;
+    public String commandType;
     public String authToken;
     public Integer gameID;
 

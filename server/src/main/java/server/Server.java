@@ -9,6 +9,7 @@ import server.requests.LoginRequest;
 import server.requests.RegisterRequest;
 import server.results.results.LoginResult;
 import server.results.results.RegisterResult;
+import server.websocket.WebSocketHandler;
 import service.GameService;
 import shared.DataAccessException;
 import spark.*;
@@ -21,6 +22,7 @@ public class Server {
     private GameService gameService;
     private ClearService clearService;
     private UserService userService;
+    private WebSocketHandler webSocketHandler;
 
     public Server() {
         UserDao userDao = new MemoryUserDAO();
@@ -42,6 +44,7 @@ public class Server {
             this.userService = new UserService(sqlUserDao, sqlAuthDao);
             this.clearService = new ClearService(sqlUserDao, sqlAuthDao, sqlGameDao);
             this.gameService = new GameService(sqlAuthDao, sqlGameDao);
+            webSocketHandler = new WebSocketHandler(sqlAuthDao, sqlGameDao);
 
         } catch (DataAccessException e) {
             String error = e.getMessage();
@@ -49,6 +52,8 @@ public class Server {
         }
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         //endpoints and handle exceptions here.
         Spark.delete("/db", this::deleteDatabase);
