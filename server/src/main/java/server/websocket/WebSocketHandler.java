@@ -51,6 +51,8 @@ public class WebSocketHandler {
         try {
             command = new Gson().fromJson(message, ResignCommand.class);
             checkCommand(command.authToken, command.gameID, session);
+            AuthData user = authDAO.getAuth(command.authToken);
+            GameData gameData = gameDAO.getGame(command.gameID);
 
             if (!connections.hasGame(command.gameID)) {
                 session.getRemote().sendString(new Gson().toJson(
@@ -59,8 +61,15 @@ public class WebSocketHandler {
                 return;
             }
 
-            GameData gameData = gameDAO.getGame(command.gameID);
-            AuthData user = authDAO.getAuth(command.authToken);
+            String whiteUser = gameData.whiteUsername();
+            String blackUser = gameData.blackUsername();
+
+            if (!user.username().equals(whiteUser) && !user.username().equals(blackUser)) {
+                ServerMessage turnMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                        gameData.gameID(), "Not in this game, just observe", null);
+                session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
+                return;
+            }
 
             String resignNotification = user.username() + " has resigned";
             ServerMessage resignMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
@@ -167,6 +176,32 @@ public class WebSocketHandler {
             }
 
             ChessGame game = gameData.game().clone(); // clone the board and data
+            ChessGame.TeamColor turn =  game.getTeamTurn();
+
+            String whiteUser = gameData.whiteUsername();
+            String blackUser = gameData.blackUsername();
+
+            if (user.username().equals(whiteUser) && turn != ChessGame.TeamColor.WHITE) {
+                ServerMessage turnMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                        gameData.gameID(), "Wait for your turn", null);
+                session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
+                return;
+            }
+
+            if (user.username().equals(blackUser) && turn != ChessGame.TeamColor.BLACK) {
+                ServerMessage turnMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                        gameData.gameID(), "Wait for your turn", null);
+                session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
+                return;
+            }
+
+            if (!user.username().equals(whiteUser) && !user.username().equals(blackUser)) {
+                ServerMessage turnMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                        gameData.gameID(), "Not in this game, just observe", null);
+                session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
+                return;
+            }
+
             game.makeMove(command.move);  // make the move happen on the board
 
             GameData update = new GameData(gameData.gameID(), gameData.whiteUsername(),
