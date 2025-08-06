@@ -50,7 +50,7 @@ public class WebSocketHandler {
         ResignCommand command = null;
         try {
             command = new Gson().fromJson(message, ResignCommand.class);
-            checkCommand(command.authToken, command.gameID);
+            checkCommand(command.authToken, command.gameID, session);
 
             if (!connections.hasGame(command.gameID)) {
                 session.getRemote().sendString(new Gson().toJson(
@@ -89,7 +89,7 @@ public class WebSocketHandler {
         try {
             command = new Gson().fromJson(message, LeaveCommand.class);
 
-            checkCommand(command.authToken, command.gameID);
+            checkCommand(command.authToken, command.gameID, session);
             AuthData user = authDAO.getAuth(command.authToken);
             GameData gameData = gameDAO.getGame(command.gameID);
 
@@ -135,13 +135,17 @@ public class WebSocketHandler {
         }
     }
 
-    private void checkCommand(String command, Integer command1) throws DataAccessException {
-        AuthData user = authDAO.getAuth(command);
+    private void checkCommand(String auth, Integer gameId, Session session) throws DataAccessException, IOException {
+        AuthData user = authDAO.getAuth(auth);
         if (user == null) {
+//            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+//                    gameId, "Unauthorized", null)));
             throw new DataAccessException("Unauthorized");
         }
-        GameData gameData = gameDAO.getGame(command1); // get the game data to manage it
+        GameData gameData = gameDAO.getGame(gameId); // get the game data to manage it
         if (gameData == null) {
+//            session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+//                    gameId, "No Game", null)));
             throw new DataAccessException("No Game");
         }
     }
@@ -151,7 +155,7 @@ public class WebSocketHandler {
 
         try {
             command = new Gson().fromJson(message, MakeMoveCommand.class);
-            checkCommand(command.authToken, command.gameID);
+            checkCommand(command.authToken, command.gameID, session);
             GameData gameData = gameDAO.getGame(command.gameID);
             AuthData user = authDAO.getAuth(command.authToken);
 
@@ -204,14 +208,16 @@ public class WebSocketHandler {
         try {
             command = new Gson().fromJson(message, ConnectCommand.class);
 
-            AuthData user = authDAO.getAuth(command.authToken);
-            if (user == null) {
-                throw new DataAccessException("Unauthorized");
-            }
+//            AuthData user = authDAO.getAuth(command.authToken);
+//            if (user == null) {
+//                throw new DataAccessException("Unauthorized");
+//            }
+            checkCommand(command.authToken, command.gameID, session);
 
             connections.add(command.gameID, session); // registers session
             GameData gameData = gameDAO.getGame(command.gameID);
             ChessGame game = gameData.game();
+            AuthData user = authDAO.getAuth(command.authToken);
 
             ServerMessage serverConnectMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, command.gameID,
                     null, null);
