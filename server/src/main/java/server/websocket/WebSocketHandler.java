@@ -62,8 +62,15 @@ public class WebSocketHandler {
                 return;
             }
 
+
             String whiteUser = gameData.whiteUsername();
             String blackUser = gameData.blackUsername();
+
+            if (!user.username().equals(whiteUser) && !user.username().equals(blackUser)) {
+                waitTurnMessage(gameData, "Not in this game, just observe", session);
+                return;
+            }
+
 
             String opponent;
             if (user.username().equals(whiteUser)) {
