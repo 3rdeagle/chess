@@ -86,7 +86,6 @@ public class WebSocketHandler {
             String output = new Gson().toJson(resignMessage, ServerMessage.class);
 
             connections.broadcast(gameData.gameID(), output);
-
             connections.clearGame(command.gameID);
 
         } catch (DataAccessException | IOException e) {
@@ -195,19 +194,16 @@ public class WebSocketHandler {
                 waitTurnMessage(gameData, "Wait for your turn", session);
                 return;
             }
-
             if (user.username().equals(blackUser) && turn != ChessGame.TeamColor.BLACK) {
                 waitTurnMessage(gameData, "Wait for your turn", session);
                 return;
             }
-
             if (!user.username().equals(whiteUser) && !user.username().equals(blackUser)) {
                 waitTurnMessage(gameData, "Not in this game, just observe", session);
                 return;
             }
 
             game.makeMove(command.move);  // make the move happen on the board
-
             GameData update = new GameData(gameData.gameID(), gameData.whiteUsername(),
                     gameData.blackUsername(), gameData.gameName(), game); // create the update
 
@@ -235,7 +231,7 @@ public class WebSocketHandler {
 
             // if the player you just made a move against is now in checkmate send that message to everyone
             if (game.isInCheckmate(nextPlayer)) {
-                String checkmate = opponent + " has been put in Checkmate";
+                String checkmate = opponent + " has been put in Checkmate\n" + user.username() + "Wins by Checkmate";
                 ServerMessage checkmateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                         command.gameID, null, checkmate);
                 String checkmateOutputMessage = new Gson().toJson(checkmateMessage, ServerMessage.class);
@@ -247,6 +243,7 @@ public class WebSocketHandler {
                         command.gameID, null, check);
                 String checkOutputMessage = new Gson().toJson(checkMessage, ServerMessage.class);
                 connections.broadcast(command.gameID, checkOutputMessage);
+                connections.clearGame(command.gameID); // get rid of the game
             }
 
         } catch (DataAccessException | InvalidMoveException | IOException e) {

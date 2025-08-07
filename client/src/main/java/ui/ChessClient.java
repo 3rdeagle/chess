@@ -367,10 +367,11 @@ public class ChessClient {
         } else {
             return """ 
                     - move <start Position> <EndPosition>
+                    - showmoves <board Position ex: a2>
+                    - redraw
+                    - help
                     - resign
                     - leave
-                    - showmoves <board Position ex: a2>
-                    - help
                     - logout
                     - quit
                     """;
