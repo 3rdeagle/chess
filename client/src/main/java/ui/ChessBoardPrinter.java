@@ -29,6 +29,7 @@ public class ChessBoardPrinter {
 
     public static void print(ChessBoard board, String playerColor, Set<ChessPosition> highlights) {
 //        board.resetBoard();
+        System.out.println();
         if ("black".equalsIgnoreCase(playerColor)) {
             printBlackSideBoard(toArray(board), highlights);
         } else {

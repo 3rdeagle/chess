@@ -62,6 +62,7 @@ public class ChessClient {
                 case "leave" -> leaveGame();
                 case "resign" -> resignGame();
                 case "showmoves" -> showMoves(params);
+                case "redraw" -> redrawBoard();
                 case "quit" -> "quit";
                 default -> "Please enter valid input";
 
@@ -69,6 +70,15 @@ public class ChessClient {
         } catch (DataAccessException | IOException e) {
             return "Failed " + e;
         }
+    }
+
+    private String redrawBoard() {
+        if (state != State.GamePlay) {
+            return "Not in a game bud";
+        }
+
+        ChessBoardPrinter.print(this.board, this.playerColor);
+        return "";
     }
 
     private String showMoves(String... params) {
@@ -106,7 +116,7 @@ public class ChessClient {
         webSocket.sendResign();
         webSocket.closeSession();
         state = State.Postlogin;
-        return "";
+        return "You have resigned";
     }
 
     private String leaveGame() throws IOException {
@@ -357,7 +367,7 @@ public class ChessClient {
                     - move <start Position> <EndPosition>
                     - resign
                     - leave
-                    - show moves
+                    - showmoves <board Position ex: a2>
                     - help
                     - logout
                     - quit

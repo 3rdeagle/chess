@@ -95,7 +95,6 @@ public class Repl implements NotificationHandler {
             var tokens = line.split(" ");
             var cmd = tokens[0].toLowerCase();
             try {
-//                System.out.println("DOES IT MAKE IT HERE?");
                 var result = client.eval(line);
                 System.out.println(result);
                 if (client.getState() != ChessClient.State.GamePlay) {

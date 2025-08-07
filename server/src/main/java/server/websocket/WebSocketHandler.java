@@ -1,6 +1,7 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -70,8 +71,14 @@ public class WebSocketHandler {
                 session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
                 return;
             }
+            String opponent;
+            if (user.username().equals(whiteUser)) {
+                opponent = blackUser;
+            } else {
+                opponent = whiteUser;
+            }
 
-            String resignNotification = user.username() + " has resigned";
+            String resignNotification = user.username() + " has resigned \n "+ opponent + " wins!!";
             ServerMessage resignMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     command.gameID, null, resignNotification);
 
@@ -126,7 +133,7 @@ public class WebSocketHandler {
 
             connections.remove(command.gameID, session);
 
-            String leaveNotification = user.username() + " left game";  // message we want displayed
+            String leaveNotification = user.username() + " has left the game";  // message we want displayed
             ServerMessage leaveMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     command.gameID, null, leaveNotification);  // creating the ServerMessage
 
@@ -216,8 +223,8 @@ public class WebSocketHandler {
             String moveJson = new Gson().toJson(moveMessage);
             connections.broadcast(command.gameID, moveJson);
 
-            String moveNotification = user.username() + " made move to " + command.move.getEndPosition().getRow()
-                    + command.move.getEndPosition().getColumn();
+            String moveNotification = user.username() + " made move from " +
+                    moveHelper(command.move.getStartPosition()) + " to " + moveHelper(command.move.getEndPosition());
             ServerMessage notifyMoveMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     command.gameID, null, moveNotification);
             // create the Json string that can then be sent to broadcast
@@ -225,29 +232,53 @@ public class WebSocketHandler {
 
             connections.broadcastExcept(command.gameID, moveOutputMessage,session);
 
+            ChessGame.TeamColor nextPlayer = game.getTeamTurn();
+
+            String opponent;
+            if (nextPlayer == ChessGame.TeamColor.WHITE) {
+                opponent = whiteUser;
+            } else {
+                opponent = blackUser;
+            }
+
+            // if the player you just made a move against is now in checkmate send that message to everyone
+            if (game.isInCheckmate(nextPlayer)) {
+                String checkmate = opponent + " has been put in Checkmate";
+                ServerMessage checkmateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        command.gameID, null, checkmate);
+                String checkmateOutputMessage = new Gson().toJson(checkmateMessage, ServerMessage.class);
+                connections.broadcast(command.gameID, checkmateOutputMessage);
+            }
+            else if (game.isInCheck(nextPlayer)) {
+                String check = opponent + " has been put in Check";
+                ServerMessage checkMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        command.gameID, null, check);
+                String checkOutputMessage = new Gson().toJson(checkMessage, ServerMessage.class);
+                connections.broadcast(command.gameID, checkOutputMessage);
+            }
+
         } catch (DataAccessException | InvalidMoveException | IOException e) {
             int gameID = (command != null ? command.gameID : 0);
             ServerMessage moveError = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
-                    gameID, "Error making move", null);
+                    gameID, "Error Invalid move", null);
             try {
                 session.getRemote().sendString(new Gson().toJson(moveError));
             } catch (IOException _) {
 
             }
         }
+    }
 
-
+    private String moveHelper(ChessPosition position) {
+        char col = (char)('a' + position.getColumn() - 1);
+        int row = position.getRow();
+        return "" + col + row;
     }
 
     private void connect(Session session, String message) throws DataAccessException, IOException {
         ConnectCommand command = null;
         try {
             command = new Gson().fromJson(message, ConnectCommand.class);
-
-//            AuthData user = authDAO.getAuth(command.authToken);
-//            if (user == null) {
-//                throw new DataAccessException("Unauthorized");
-//            }
             checkCommand(command.authToken, command.gameID, session);
 
             connections.add(command.gameID, session); // registers session
@@ -262,7 +293,16 @@ public class WebSocketHandler {
             String output = new Gson().toJson(serverConnectMessage);
             session.getRemote().sendString(output);
 
-            String connectNotification = "New user " + user.username() + " has joined the game";
+            String color;
+            if (user.username().equals(gameData.whiteUsername())) {
+                color = "white";
+            } else if (user.username().equals(gameData.blackUsername())) {
+                color = "black";
+            } else {
+                color = "observer";
+            }
+
+            String connectNotification = "New user " + user.username() + " has joined the game as " + color;
             ServerMessage connectOutputMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     command.gameID, null, connectNotification);
 
