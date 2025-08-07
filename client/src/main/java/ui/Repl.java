@@ -81,21 +81,33 @@ public class Repl implements NotificationHandler {
     private void gamePlay() {
         ChessBoard board = client.getBoard();
         String playerColor = client.getPlayerColor();
-        ChessBoardPrinter.print(board, playerColor);
+//        ChessBoardPrinter.print(board, playerColor);
 
         while (true) {
-            System.out.print("Status: Game >>> ");
+            System.out.println(client.help());
+//            System.out.print("Status: Game >>> ");
             String line = scanner.nextLine();
             if (line.equalsIgnoreCase("quit")) {
                 System.exit(0);
-            }
-            if (client.getState() != ChessClient.State.GamePlay) {
-                return;
             }
             if (line.equalsIgnoreCase("exit")) {
                 client.setState(ChessClient.State.Postlogin);
                 return;
             }
+            var tokens = line.split(" ");
+            var cmd = tokens[0].toLowerCase();
+            try {
+//                System.out.println("DOES IT MAKE IT HERE?");
+                var result = client.eval(line);
+                System.out.println(result);
+                if (client.getState() != ChessClient.State.GamePlay) {
+                    return;
+                }
+            } catch (DataAccessException e) {
+                System.out.println("Error Gameplay");
+            }
+
+
         }
     }
 
@@ -106,6 +118,7 @@ public class Repl implements NotificationHandler {
     @Override
     public void loadGame(ChessGame game) {
         ChessBoardPrinter.print(game.getBoard(), game.getTeamTurn().toString());
+        System.out.print("Game >>> \n");
     }
 
     @Override

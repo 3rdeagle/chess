@@ -37,7 +37,6 @@ public class ChessClient {
         facade = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.notificationHandler = notificationHandler;
-        this.webSocket = new WebSocketFacade(serverUrl, notificationHandler);
 
     }
 
@@ -56,18 +55,38 @@ public class ChessClient {
                 case "forgetmestick" -> clearData();
                 case "observe" -> observeGame(params);
                 case "help" -> helpMe();
+                // gameplay
                 case "move" -> makeMove(params);
+                case "leave" -> leaveGame();
+                case "resign" -> resignGame();
                 case "quit" -> "quit";
                 default -> "Please enter valid input";
 
             });
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | IOException e) {
             return "Failed " + e;
         }
     }
 
-    private void makeMove(ChessMove move) throws IOException {
-        webSocket.sendMove(move);
+    private String resignGame() throws IOException {
+        webSocket.sendResign();
+        webSocket.closeSession();
+        state = State.Postlogin;
+        return "";
+    }
+
+    private String leaveGame() throws IOException {
+        webSocket.sendLeave();
+        webSocket.closeSession();
+        state = State.Postlogin;
+        return "";
+    }
+
+    private String makeMove(String... params) throws IOException, DataAccessException {
+
+        ChessMove moveToMake = ChessMove.determineMove(params);
+        webSocket.sendMove(moveToMake);
+        return "";
     }
 
     public String registerUser(String... params) throws DataAccessException {
@@ -87,6 +106,7 @@ public class ChessClient {
             RegisterRequest request = new RegisterRequest(username,password,email);
             RegisterResult result = facade.registerUser(request);
             this.username = result.username();
+            this.authToken = result.authToken();
             state = State.Postlogin;
             return "Register user: " + username;
         } catch (DataAccessException e ) {
@@ -111,6 +131,7 @@ public class ChessClient {
             LoginRequest request = new LoginRequest(username, password);
             LoginResult result = facade.login(request);
             this.username = result.username();
+            this.authToken = result.authToken();
             state = State.Postlogin;
             return "Login Successful";
         } catch (DataAccessException e) {
@@ -180,7 +201,7 @@ public class ChessClient {
         }
     }
 
-    public String joinGame(String... params ) throws DataAccessException {
+    public String joinGame(String... params ) throws DataAccessException, IOException {
         if (state == State.Prelogin) {
             return "Unauthorized: Please log in";
         }
@@ -224,12 +245,11 @@ public class ChessClient {
         this.playerColor = color;
         this.board = gameData.game().getBoard();
         this.board.resetBoard();
+
+        // open a websocket after the user has joined a game
+        this.webSocket = new WebSocketFacade(serverUrl, notificationHandler, authToken, gameData.gameID());
+        this.webSocket.sendConnection();
         this.state = State.GamePlay;
-
-        this.authToken =
-
-        webSocket = new WebSocketFacade(serverUrl, this);
-        webSocket.sendUserCommand(new ConnectCommand());
 
         return "Joined game: " + index;
 
@@ -243,7 +263,7 @@ public class ChessClient {
         return null;
     }
 
-    public String observeGame(String... params) {
+    public String observeGame(String... params) throws IOException {
         if (state != State.Postlogin) {
             return "Unauthorize: not logged in";
         }
@@ -269,6 +289,8 @@ public class ChessClient {
         this.board = gameData.game().getBoard();
         this.state = State.GamePlay;
         this.playerColor = "WHITE";
+        this.webSocket = new WebSocketFacade(serverUrl, notificationHandler, authToken, gameData.gameID());
+        this.webSocket.sendConnection();
         return "Observing " + gameData.whiteUsername() + " vs " + gameData.blackUsername();
     }
 
@@ -284,17 +306,30 @@ public class ChessClient {
                     - login <username> <password>
                     - quit
                     """;
+        } else if (state == State.Postlogin) {
+            return """ 
+                    - listgames
+                    - creategame <gamename>
+                    - joingame <playercolor> <gamenumber>
+                    - observe <gamenumber>
+                    - help
+                    - logout
+                    - quit
+                    """;
+        } else {
+            return """ 
+                    - move <start Position> <EndPosition>
+                    - resign
+                    - leave
+                    - show moves
+                    - help
+                    - logout
+                    - quit
+                    """;
         }
-        return """ 
-                - listgames
-                - creategame <gamename>
-                - joingame <playercolor> <gamenumber>
-                - observe <gamenumber>
-                - help
-                - logout
-                - quit
-                """;
     }
+
+
 
     public State getState() {
         return state;

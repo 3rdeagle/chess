@@ -1,5 +1,7 @@
 package chess;
 
+import shared.DataAccessException;
+
 import java.util.Objects;
 
 /**
@@ -44,6 +46,35 @@ public class ChessMove {
     public ChessPiece.PieceType getPromotionPiece() {
         return promotionPiece; /* Returning the promotion piece info, which I believe is figured out
                                                     somewhere else that it can be promoted */
+    }
+
+    public static ChessPosition convertToCoor(String square) {
+        char colChar = Character.toLowerCase(square.charAt(0));
+        int col = colChar - 'a' + 1;
+        int row = Integer.parseInt(square.substring(1));
+
+        return new ChessPosition(row, col);
+    }
+
+    public static ChessMove determineMove (String[] args) throws DataAccessException {
+        ChessPosition start = convertToCoor(args[0]);
+        ChessPosition end = convertToCoor(args[1]);
+
+        ChessPiece.PieceType promo = null;
+        if (args.length == 3) {
+            switch (args[2].toUpperCase() ) {
+                case "Q": promo = ChessPiece.PieceType.QUEEN;
+                break;
+                case "R": promo = ChessPiece.PieceType.ROOK;
+                break;
+                case "N": promo = ChessPiece.PieceType.KNIGHT;
+                break;
+                case "B": promo = ChessPiece.PieceType.BISHOP;
+                break;
+                default: throw new DataAccessException("Invalid");
+            }
+        }
+        return new ChessMove(start, end, promo);
     }
 
     @Override

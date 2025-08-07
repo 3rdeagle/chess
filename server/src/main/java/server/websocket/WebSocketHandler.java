@@ -84,7 +84,7 @@ public class WebSocketHandler {
         } catch (DataAccessException | IOException e) {
             int gameID = (command != null ? command.gameID : 0);
             ServerMessage moveError = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
-                    gameID, "Error making move", null);
+                    gameID, "Error: webhandler resign", null);
             try {
                 session.getRemote().sendString(new Gson().toJson(moveError));
             } catch (IOException _) {
@@ -216,7 +216,8 @@ public class WebSocketHandler {
             String moveJson = new Gson().toJson(moveMessage);
             connections.broadcast(command.gameID, moveJson);
 
-            String moveNotification = user.username() + " made move " + command.move;
+            String moveNotification = user.username() + " made move to " + command.move.getEndPosition().getRow()
+                    + command.move.getEndPosition().getColumn();
             ServerMessage notifyMoveMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     command.gameID, null, moveNotification);
             // create the Json string that can then be sent to broadcast
