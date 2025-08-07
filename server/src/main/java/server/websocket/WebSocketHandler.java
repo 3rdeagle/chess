@@ -236,6 +236,7 @@ public class WebSocketHandler {
                         command.gameID, null, checkmate);
                 String checkmateOutputMessage = new Gson().toJson(checkmateMessage, ServerMessage.class);
                 connections.broadcast(command.gameID, checkmateOutputMessage);
+                connections.clearGame(command.gameID); // get rid of the game done by checkmate
             }
             else if (game.isInCheck(nextPlayer)) {
                 String check = opponent + " has been put in Check";
@@ -243,7 +244,15 @@ public class WebSocketHandler {
                         command.gameID, null, check);
                 String checkOutputMessage = new Gson().toJson(checkMessage, ServerMessage.class);
                 connections.broadcast(command.gameID, checkOutputMessage);
-                connections.clearGame(command.gameID); // get rid of the game
+
+            }
+            else if (game.isInStalemate(nextPlayer)) {
+                String draw = "Players in stalemate: draw";
+                ServerMessage stalemateDraw = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        command.gameID, null, draw);
+                String stalemateOutput = new Gson().toJson(stalemateDraw, ServerMessage.class);
+                connections.broadcast(command.gameID, stalemateOutput);
+                connections.clearGame(command.gameID); // get rid of the game done by stalemate
             }
 
         } catch (DataAccessException | InvalidMoveException | IOException e) {
