@@ -16,6 +16,7 @@ import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 import websocket.commands.ConnectCommand;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,8 +66,8 @@ public class ChessClient {
         }
     }
 
-    private void makeMove(ChessMove move) {
-        webSocket.sendUserCommand();
+    private void makeMove(ChessMove move) throws IOException {
+        webSocket.sendMove(move);
     }
 
     public String registerUser(String... params) throws DataAccessException {
@@ -225,7 +226,7 @@ public class ChessClient {
         this.board.resetBoard();
         this.state = State.GamePlay;
 
-        this.authToken = 
+        this.authToken =
 
         webSocket = new WebSocketFacade(serverUrl, this);
         webSocket.sendUserCommand(new ConnectCommand());

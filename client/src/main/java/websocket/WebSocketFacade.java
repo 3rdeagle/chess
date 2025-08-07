@@ -1,9 +1,12 @@
 package websocket;
 
 
+import chess.ChessMove;
 import com.google.gson.Gson;
-import dataaccess.GameDAO;
 import websocket.commands.ConnectCommand;
+import websocket.commands.LeaveCommand;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.ResignCommand;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -55,15 +58,23 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void sendUserCommand (Object command) {
-        try {
-            session.getBasicRemote().sendText(new Gson().toJson(command));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void closeSession() throws IOException {
+        session.close();
     }
 
-    public void sendConnection() {
-        session.getBasicRemote().sendText(new Gson().toJson(new ConnectCommandValue(authToken, gameID)));
+    public void sendConnection() throws IOException {
+        session.getBasicRemote().sendText(new Gson().toJson(new ConnectCommand(authToken, gameID)));
+    }
+
+    public void sendResign() throws IOException {
+        session.getBasicRemote().sendText(new Gson().toJson(new ResignCommand(authToken, gameID)));
+    }
+
+    public void sendLeave() throws IOException {
+        session.getBasicRemote().sendText(new Gson().toJson(new LeaveCommand(authToken, gameID)));
+    }
+
+    public void sendMove(ChessMove move) throws IOException {
+        session.getBasicRemote().sendText(new Gson().toJson(new MakeMoveCommand(authToken, gameID, move)));
     }
 }

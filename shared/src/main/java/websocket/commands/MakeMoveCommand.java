@@ -11,10 +11,11 @@ public class MakeMoveCommand    {
     public MakeMoveCommand () {
     }
 
-    public MakeMoveCommand(String authToken, int gameID) {
+    public MakeMoveCommand(String authToken, int gameID, ChessMove move) {
         this.commandType = "MAKE_MOVE";
         this.authToken = authToken;
         this.gameID = gameID;
+        this.move = move;
     }
 
 }
