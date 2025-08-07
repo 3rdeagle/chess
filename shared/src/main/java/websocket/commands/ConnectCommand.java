@@ -6,6 +6,11 @@ public class ConnectCommand {
     public String authToken;
     public Integer gameID;
 
-    public ConnectCommand() {
+    public ConnectCommand() { }
+
+    public ConnectCommand(String authToken, int gameID) {
+        this.commandType = "CONNECT";
+        this.authToken = authToken;
+        this.gameID = gameID;
     }
 }

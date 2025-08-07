@@ -8,4 +8,10 @@ public class LeaveCommand {
     public LeaveCommand() {
 
     }
+
+    public LeaveCommand(String authToken, int gameID) {
+        this.commandType = "LEAVE";
+        this.authToken = authToken;
+        this.gameID = gameID;
+    }
 }

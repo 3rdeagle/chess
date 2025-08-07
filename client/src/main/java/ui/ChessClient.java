@@ -1,6 +1,8 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessMove;
+import model.AuthData;
 import server.requests.JoinGameRequest;
 import shared.DataAccessException;
 import model.GameData;
@@ -10,6 +12,9 @@ import server.requests.LoginRequest;
 import server.requests.RegisterRequest;
 import server.results.results.LoginResult;
 import server.results.results.RegisterResult;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
+import websocket.commands.ConnectCommand;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,10 +28,15 @@ public class ChessClient {
     private String username = null;
     private String playerColor;
     private List<GameData> previousGames = List.of();
+    private WebSocketFacade webSocket;
+    private NotificationHandler notificationHandler;
+    private String authToken;
 
-    public ChessClient(String serverUrl) {
+    public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         facade = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
+        this.notificationHandler = notificationHandler;
+        this.webSocket = new WebSocketFacade(serverUrl, notificationHandler);
 
     }
 
@@ -45,6 +55,7 @@ public class ChessClient {
                 case "forgetmestick" -> clearData();
                 case "observe" -> observeGame(params);
                 case "help" -> helpMe();
+                case "move" -> makeMove(params);
                 case "quit" -> "quit";
                 default -> "Please enter valid input";
 
@@ -52,6 +63,10 @@ public class ChessClient {
         } catch (DataAccessException e) {
             return "Failed " + e;
         }
+    }
+
+    private void makeMove(ChessMove move) {
+        webSocket.sendUserCommand();
     }
 
     public String registerUser(String... params) throws DataAccessException {
@@ -209,6 +224,12 @@ public class ChessClient {
         this.board = gameData.game().getBoard();
         this.board.resetBoard();
         this.state = State.GamePlay;
+
+        this.authToken = 
+
+        webSocket = new WebSocketFacade(serverUrl, this);
+        webSocket.sendUserCommand(new ConnectCommand());
+
         return "Joined game: " + index;
 
     }

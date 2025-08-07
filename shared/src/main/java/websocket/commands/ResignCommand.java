@@ -8,4 +8,10 @@ public class ResignCommand {
     public ResignCommand() {
 
     }
+
+    public ResignCommand(String authToken, int gameID) {
+        this.commandType = "RESIGN";
+        this.authToken = authToken;
+        this.gameID = gameID;
+    }
 }

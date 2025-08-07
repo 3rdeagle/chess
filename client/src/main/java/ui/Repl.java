@@ -14,7 +14,7 @@ public class Repl implements NotificationHandler {
     Scanner scanner = new Scanner(System.in);
 
     public Repl(String serverURL) {
-        this.client = new ChessClient(serverURL);
+        this.client = new ChessClient(serverURL, this);
     }
 
     public void run() {
@@ -104,18 +104,18 @@ public class Repl implements NotificationHandler {
     }
 
     @Override
-    public void loadGame(ChessGame gameState) {
-        ChessBoardPrinter.print()
+    public void loadGame(ChessGame game) {
+        ChessBoardPrinter.print(game.getBoard(), game.getTeamTurn().toString());
     }
 
     @Override
     public void notification(String message) {
-        System.out.println(message);
+        System.out.println("NOTICE: " + message);
         printPrompt();
     }
 
     @Override
     public void error(String errMessage) {
-        System.out.println(errMessage);
+        System.out.println("ERROR " + errMessage);
     }
 }

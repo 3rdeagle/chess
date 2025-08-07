@@ -11,4 +11,10 @@ public class MakeMoveCommand    {
     public MakeMoveCommand () {
     }
 
+    public MakeMoveCommand(String authToken, int gameID) {
+        this.commandType = "MAKE_MOVE";
+        this.authToken = authToken;
+        this.gameID = gameID;
+    }
+
 }
