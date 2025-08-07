@@ -23,6 +23,7 @@ public class ChessBoardPrinter {
 
     public static void main() {
         ChessBoard board = new ChessBoard();
+        board.resetBoard();
         System.out.println();
         print(board, "black", Set.of());
     }

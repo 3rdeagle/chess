@@ -127,7 +127,9 @@ public class ChessClient {
     }
 
     private String makeMove(String... params) throws IOException, DataAccessException {
-
+        if (params.length != 2) {
+            return "Usage: move <Start position> <End position>";
+        }
         ChessMove moveToMake = ChessMove.determineMove(params);
         webSocket.sendMove(moveToMake);
         return "";

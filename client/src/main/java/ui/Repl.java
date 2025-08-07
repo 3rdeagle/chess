@@ -116,7 +116,13 @@ public class Repl implements NotificationHandler {
     public void loadGame(ChessGame game) {
         client.setGame(game);
         client.setBoard(game.getBoard());
-        ChessBoardPrinter.print(game.getBoard(), game.getTeamTurn().toString());
+
+        String direction = client.getPlayerColor(); // get the clients color
+        if (!"black".equalsIgnoreCase(direction)) { // if that color is not black, so observer or white we print white
+            direction = "white";
+        }
+
+        ChessBoardPrinter.print(game.getBoard(), direction);
         System.out.print("Game >>> \n");
     }
 

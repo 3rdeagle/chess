@@ -65,21 +65,21 @@ public class ChessPiece {
         }
         if (pieceColor == ChessGame.TeamColor.WHITE) {
             return switch (type) {
-                case KING -> ('K');
-                case QUEEN -> ('Q');
-                case BISHOP -> ('B');
-                case KNIGHT -> ('N');
-                case ROOK -> ('R');
-                case PAWN -> ('P');
+                case KING -> ('♔');
+                case QUEEN -> ('♕');
+                case BISHOP -> ('♗');
+                case KNIGHT -> ('♘');
+                case ROOK -> ('♖');
+                case PAWN -> ('♙');
             };
         } else {
             return switch (type) {
-                case KING -> ('k');
-                case QUEEN -> ('q');
-                case BISHOP -> ('b');
-                case KNIGHT -> ('n');
-                case ROOK -> ('r');
-                case PAWN -> ('p');
+                case KING -> ('♚');
+                case QUEEN -> ('♛');
+                case BISHOP -> ('♝');
+                case KNIGHT -> ('♞');
+                case ROOK -> ('♜');
+                case PAWN -> ('♟');
             };
         }
     }
