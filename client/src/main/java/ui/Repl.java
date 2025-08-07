@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import shared.DataAccessException;
 import websocket.NotificationHandler;
 import websocket.messages.Notification;
@@ -98,13 +99,23 @@ public class Repl implements NotificationHandler {
         }
     }
 
+    private void printPrompt() {
+        System.out.print("\n" + ">>> " );
+    }
+
     @Override
-    public void notify(Notification notification) {
-        System.out.println( notification.message());
+    public void loadGame(ChessGame gameState) {
+        ChessBoardPrinter.print()
+    }
+
+    @Override
+    public void notification(String message) {
+        System.out.println(message);
         printPrompt();
     }
 
-    private void printPrompt() {
-        System.out.print("\n" + ">>> " );
+    @Override
+    public void error(String errMessage) {
+        System.out.println(errMessage);
     }
 }
