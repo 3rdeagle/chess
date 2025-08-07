@@ -1,7 +1,9 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import model.AuthData;
 import server.requests.JoinGameRequest;
 import shared.DataAccessException;
@@ -17,8 +19,7 @@ import websocket.WebSocketFacade;
 import websocket.commands.ConnectCommand;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ChessClient {
     private final ServerFacade facade;
@@ -32,6 +33,7 @@ public class ChessClient {
     private WebSocketFacade webSocket;
     private NotificationHandler notificationHandler;
     private String authToken;
+    private ChessGame game;
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         facade = new ServerFacade(serverUrl);
@@ -59,6 +61,7 @@ public class ChessClient {
                 case "move" -> makeMove(params);
                 case "leave" -> leaveGame();
                 case "resign" -> resignGame();
+                case "showmoves" -> showMoves(params);
                 case "quit" -> "quit";
                 default -> "Please enter valid input";
 
@@ -66,6 +69,37 @@ public class ChessClient {
         } catch (DataAccessException | IOException e) {
             return "Failed " + e;
         }
+    }
+
+    private String showMoves(String... params) {
+        if (state != State.GamePlay) {
+            return "Not in a game bud";
+        }
+        if (params.length != 1) {
+            return "Usage: showmoves <pieceposition>";
+        }
+
+        ChessPosition position;
+        try {
+            position = ChessMove.convertToCoor(params[0]);
+        } catch (Exception e) {
+            return "invalid position";
+        }
+
+        Collection<ChessMove> possibleMoves = game.validMoves(position);
+        if (possibleMoves.isEmpty()) {
+            return "No possible moves for this piece";
+        }
+
+        Set<ChessPosition> targetMoves = new HashSet<>();
+        for (ChessMove m : possibleMoves) {
+            targetMoves.add(m.getEndPosition()); // get list of all possilbe moves end positions
+        }
+
+        String color = (playerColor != null ? playerColor : "WHITE");
+        ChessBoardPrinter.print(this.board, color, targetMoves);
+        return "";
+
     }
 
     private String resignGame() throws IOException {
@@ -243,6 +277,7 @@ public class ChessClient {
         }
 
         this.playerColor = color;
+        this.game = gameData.game();
         this.board = gameData.game().getBoard();
         this.board.resetBoard();
 
@@ -288,6 +323,7 @@ public class ChessClient {
         GameData gameData = previousGames.get(index-1);
         this.board = gameData.game().getBoard();
         this.state = State.GamePlay;
+        this.game = gameData.game();
         this.playerColor = "WHITE";
         this.webSocket = new WebSocketFacade(serverUrl, notificationHandler, authToken, gameData.gameID());
         this.webSocket.sendConnection();
@@ -349,5 +385,13 @@ public class ChessClient {
 
     public List<GameData> getPreviousGames() {
         return previousGames;
+    }
+
+    public void setBoard(ChessBoard board) {
+        this.board = board;
+    }
+
+    public void setGame(ChessGame game) {
+        this.game = game;
     }
 }

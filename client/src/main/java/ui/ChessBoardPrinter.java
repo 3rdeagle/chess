@@ -4,6 +4,10 @@ import chess.ChessBoard;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+
 public class ChessBoardPrinter {
 
     private static char[][] toArray(ChessBoard board)    {
@@ -20,19 +24,23 @@ public class ChessBoardPrinter {
     public static void main() {
         ChessBoard board = new ChessBoard();
         System.out.println();
-        print(board, "black");
+        print(board, "black", Set.of());
     }
 
-    public static void print(ChessBoard board, String playerColor) {
+    public static void print(ChessBoard board, String playerColor, Set<ChessPosition> highlights) {
 //        board.resetBoard();
         if ("black".equalsIgnoreCase(playerColor)) {
-            printBlackSideBoard(toArray(board));
+            printBlackSideBoard(toArray(board), highlights);
         } else {
-            printWhiteSideBoard(toArray(board));
+            printWhiteSideBoard(toArray(board), highlights);
         }
     }
 
-    public static void printWhiteSideBoard(char[][] board) {
+    public static void print(ChessBoard board, String playerColor) {
+        print(board, playerColor, Collections.emptySet());
+    }
+
+    public static void printWhiteSideBoard(char[][] board, Set<ChessPosition> highlights) {
         System.out.print("\u001B[104m\u001B[30m   \u001B[0m");
         for (char fileChar = 'a'; fileChar <= 'h'; fileChar++) {
             System.out.print("\u001B[104m\u001B[30m " + fileChar + " \u001B[0m");
@@ -45,7 +53,7 @@ public class ChessBoardPrinter {
                 System.out.print("\u001B[104m\u001B[30m " + (8 - rank) + " \u001B[0m");
 
                 for (int file = 0; file < 8; file++) {
-                    printHelper(board, rank, file);
+                    printHelper(board, rank, file, highlights );
                 }
 
                 System.out.println("\u001B[104m\u001B[30m " + (8 - rank) + " \u001B[0m");
@@ -61,7 +69,7 @@ public class ChessBoardPrinter {
         }
 
 
-    public static void printBlackSideBoard(char[][] board) {
+    public static void printBlackSideBoard(char[][] board, Set<ChessPosition> highlights) {
 
             System.out.print("\u001B[102m\u001B[30m   \u001B[0m");
 
@@ -80,7 +88,7 @@ public class ChessBoardPrinter {
 
                 for (int file = 7; file >= 0; file--) {
 
-                    printHelper(board, rank, file);
+                    printHelper(board, rank, file, highlights);
                 }
 
                 System.out.println("\u001B[102m\u001B[30m " + label + " \u001B[0m");
@@ -94,9 +102,16 @@ public class ChessBoardPrinter {
             System.out.println();
         }
 
-    private static void printHelper(char[][] board, int rank, int file) {
-        boolean lightSquare = (rank + file) % 2 == 0;
-        String bg = lightSquare ? "\u001b[107m" : "\u001b[40m";
+    private static void printHelper(char[][] board, int rank, int file, Set<ChessPosition> highlights) {
+        ChessPosition checkPosition = new ChessPosition(8 - rank, file + 1);
+        String bg;
+        if (highlights.contains(checkPosition)) {
+            bg = "\u001b[43m";
+        } else {
+            boolean lightSquare = (rank + file) % 2 == 0;
+            bg = lightSquare ? "\u001b[107m" : "\u001b[40m";
+        }
+
         char piece = board[rank][file];
         char displayChar;
         if (piece == ' ') {

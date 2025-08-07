@@ -4,8 +4,6 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import shared.DataAccessException;
 import websocket.NotificationHandler;
-import websocket.messages.Notification;
-
 
 import java.util.Scanner;
 
@@ -117,6 +115,8 @@ public class Repl implements NotificationHandler {
 
     @Override
     public void loadGame(ChessGame game) {
+        client.setGame(game);
+        client.setBoard(game.getBoard());
         ChessBoardPrinter.print(game.getBoard(), game.getTeamTurn().toString());
         System.out.print("Game >>> \n");
     }

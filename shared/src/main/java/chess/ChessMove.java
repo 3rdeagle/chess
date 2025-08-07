@@ -61,7 +61,7 @@ public class ChessMove {
         ChessPosition end = convertToCoor(args[1]);
 
         ChessPiece.PieceType promo = null;
-        if (args.length == 3) {
+        if (args.length == 3) { // I could make this so that instead of arguments based if its at edge of board
             switch (args[2].toUpperCase() ) {
                 case "Q": promo = ChessPiece.PieceType.QUEEN;
                 break;
