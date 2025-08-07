@@ -65,12 +65,6 @@ public class WebSocketHandler {
             String whiteUser = gameData.whiteUsername();
             String blackUser = gameData.blackUsername();
 
-            if (!user.username().equals(whiteUser) && !user.username().equals(blackUser)) {
-                ServerMessage turnMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
-                        gameData.gameID(), "Not in this game, just observe", null);
-                session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
-                return;
-            }
             String opponent;
             if (user.username().equals(whiteUser)) {
                 opponent = blackUser;
@@ -236,12 +230,7 @@ public class WebSocketHandler {
 
             ChessGame.TeamColor nextPlayer = game.getTeamTurn();
 
-            String opponent;
-            if (nextPlayer == ChessGame.TeamColor.WHITE) {
-                opponent = whiteUser;
-            } else {
-                opponent = blackUser;
-            }
+            String opponent = checkOpponent(nextPlayer, whiteUser, blackUser);
 
             // if the player you just made a move against is now in checkmate send that message to everyone
             if (game.isInCheckmate(nextPlayer)) {
@@ -269,6 +258,16 @@ public class WebSocketHandler {
                 throw new DataAccessException("problem in make a move");
             }
         }
+    }
+
+    private static String checkOpponent(ChessGame.TeamColor nextPlayer, String whiteUser, String blackUser) {
+        String opponent;
+        if (nextPlayer == ChessGame.TeamColor.WHITE) {
+            opponent = whiteUser;
+        } else {
+            opponent = blackUser;
+        }
+        return opponent;
     }
 
     private String moveHelper(ChessPosition position) {

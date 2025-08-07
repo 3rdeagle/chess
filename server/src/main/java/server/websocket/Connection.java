@@ -19,10 +19,6 @@ public class Connection {
         this.gameID = gameID;
     }
 
-    public void setObserver(boolean observer) {
-        this.observer = observer;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -33,9 +29,5 @@ public class Connection {
 
     public boolean isObserver() {
         return observer;
-    }
-
-    public void send(String msg) throws IOException {
-        session.getRemote().sendString(msg);
     }
 }
