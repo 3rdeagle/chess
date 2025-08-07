@@ -47,7 +47,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign(Session session, String message) {
+    private void resign(Session session, String message) throws IOException {
         ResignCommand command = null;
         try {
             command = new Gson().fromJson(message, ResignCommand.class);
@@ -94,13 +94,14 @@ public class WebSocketHandler {
                     gameID, "Error: webhandler resign", null);
             try {
                 session.getRemote().sendString(new Gson().toJson(moveError));
-            } catch (IOException _) {
+            } catch (IOException exception) {
+                throw new IOException("behold a problem with remote in resign");
             }
         }
 
     }
 
-    private void leave(Session session, String message) throws IOException {
+    private void leave(Session session, String message) throws IOException, DataAccessException {
         LeaveCommand command = null;
         try {
             command = new Gson().fromJson(message, LeaveCommand.class);
@@ -146,7 +147,8 @@ public class WebSocketHandler {
                     gameID, "Error making move", null);
             try {
                 session.getRemote().sendString(new Gson().toJson(moveError));
-            } catch (IOException _) {
+            } catch (IOException ex) {
+                throw new DataAccessException("Theres a problem in leave you fool");
             }
         }
     }
@@ -166,7 +168,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(Session session, String message) {
+    private void makeMove(Session session, String message) throws DataAccessException {
         MakeMoveCommand command = null;
 
         try {
@@ -263,8 +265,8 @@ public class WebSocketHandler {
                     gameID, "Error Invalid move", null);
             try {
                 session.getRemote().sendString(new Gson().toJson(moveError));
-            } catch (IOException _) {
-
+            } catch (IOException ex) {
+                throw new DataAccessException("problem in make a move");
             }
         }
     }
