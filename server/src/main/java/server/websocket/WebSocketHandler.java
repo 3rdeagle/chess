@@ -185,23 +185,17 @@ public class WebSocketHandler {
             String blackUser = gameData.blackUsername();
 
             if (user.username().equals(whiteUser) && turn != ChessGame.TeamColor.WHITE) {
-                ServerMessage turnMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
-                        gameData.gameID(), "Wait for your turn", null);
-                session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
+                waitTurnMessage(gameData, "Wait for your turn", session);
                 return;
             }
 
             if (user.username().equals(blackUser) && turn != ChessGame.TeamColor.BLACK) {
-                ServerMessage turnMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
-                        gameData.gameID(), "Wait for your turn", null);
-                session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
+                waitTurnMessage(gameData, "Wait for your turn", session);
                 return;
             }
 
             if (!user.username().equals(whiteUser) && !user.username().equals(blackUser)) {
-                ServerMessage turnMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
-                        gameData.gameID(), "Not in this game, just observe", null);
-                session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
+                waitTurnMessage(gameData, "Not in this game, just observe", session);
                 return;
             }
 
@@ -258,6 +252,12 @@ public class WebSocketHandler {
                 throw new DataAccessException("problem in make a move");
             }
         }
+    }
+
+    private static void waitTurnMessage(GameData gameData, String message, Session session) throws IOException {
+        ServerMessage turnMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR,
+                gameData.gameID(), message, null);
+        session.getRemote().sendString(new Gson().toJson(turnMessage, ServerMessage.class));
     }
 
     private static String checkOpponent(ChessGame.TeamColor nextPlayer, String whiteUser, String blackUser) {
